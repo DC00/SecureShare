@@ -30,7 +30,7 @@ while False:
     if not user in userpass:
         print('User not found')
     elif userpass[user] == SHA256.new(bytes(pword)).hexdigest():
-        print('hello yo')
+        print('login conflict plzzzz')
     else:
         print('login fails')
     #test comment changing the lines
