@@ -1,5 +1,5 @@
 __author__ = 'las3wh'
-
+"""I'm adding a conflict........."""
 from Crypto.Hash import SHA256
 
 userpass = {}
@@ -16,7 +16,7 @@ while True:
         pword = SHA256.new(i.encode()).hexdigest()
     userpass[user] = pword
 print("Usernames and passwords updated. You can now attempt to log in.")
-while True:
+while False:
     i = input('User: ')
     if i is '':
         break
