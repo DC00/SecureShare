@@ -32,5 +32,5 @@ while True:
     elif userpass[user] == SHA256.new(bytes(pword)).hexdigest():
         print('login succeeds')
     else:
-        print('login fails')
+        print('login suceeds')
     #test comment changing the lines
