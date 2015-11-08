@@ -1,4 +1,4 @@
 # Summary
 
-* Tutorials
+* [Tutorials](tutorials.md)
 
