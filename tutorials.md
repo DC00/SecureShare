@@ -12,4 +12,5 @@ https://www.youtube.com/watch?v=ulJ7ZCx8ehg&list=PLEsfXFp6DpzRcd-q4vR5qAgOZUuz80
     - Idea: Django Project has lots of apps
     - Each app should only do one thing
     - The **reporters** app only deals with reporter stuff
-6. 
+6. The admin page is used for modifying things in the database
+7. When you refresh your page, you send a new GET request to the server
