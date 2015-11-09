@@ -1,6 +1,6 @@
 # Django Project CS 3240
 #### Project Layout
 
-**securewitness** is the project folder 
+**mysite** is the project folder 
 
-**reports** is the app which has the report feature
+**secureshare** is the app which has the reports and signup features
