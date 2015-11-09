@@ -1,11 +1,11 @@
 import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'securewitness.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
 from django.conf import settings
 
 
 
 from django.utils import timezone
-from reports.models import Report
+from secureshare.models import Report
 
 import string
 import random
