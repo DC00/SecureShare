@@ -17,6 +17,12 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
+    # app that controls the admin site. Go to the adminn site at localhost:8000/admin
     url(r'^admin/', include(admin.site.urls)),
+
     url(r'^reports/', include('secureshare.urls')),
+
+    url(r'^contact/$', 'secureshare.views.contact', name='contact'),
+
+    url(r'^$', 'secureshare.views.home', name='home'),
 ]
