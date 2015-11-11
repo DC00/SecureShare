@@ -1,15 +1,42 @@
-<h1>{{ title }}</h1>
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
 
-<!-- In settings.py, the TEMPLATES has auth and user hash values -->
-{{ user }}
 
-{{ request.user }}
 
-<!-- The method is POST because we want to send data. The action is where the data will be sent -->
-<form method='POST' action=''>{% csrf_token %}
-{{ form.as_p }}
+{% block head_title %}Welcome | {{ block.super }}{% endblock %}
 
-<!-- When you click this button it adds a GET method. Same thing as going to a specific url -->
-<input type='submit' value='Sign Up'>
 
-</form>
+
+{% block jumbotron_content %}
+
+    <h1>SecureShare</h1>
+    <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
+    <p>To see the difference between static and fixed top navbars, just scroll.</p>
+    <p>
+      <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
+    </p>
+{% endblock %}
+ 
+
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-6 col-md-4">
+        <h1>{{ title }}</h1>
+        <!-- In settings.py, the TEMPLATES h as auth and user hash values -->
+        {{ user }}
+
+        {{ request.user }}
+
+        <!-- The method is POST because we want to send data. The action is where the data will be sent -->
+        <form method='POST' action=''>{% csrf_token %}
+        {{ form|crispy }}
+
+        <!-- When you click this button it adds a GET method. Same thing as going to a specific url -->
+        <input class='btn btn-primary' type='submit' value='Sign Up'>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}
