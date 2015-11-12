@@ -5,28 +5,37 @@
 
 {% block head_title %}Welcome | {{ block.super }}{% endblock %}
 
+<style>
+
+{% block style %}
+
+{% endblock %}
+</style>
 
 
 {% block jumbotron_content %}
+<div class="row">
+    <div class="col-sm-6">
+        <h1>SecureShare</h1>
+        <p>**Change this text to talk about SecureShare**</p>
+        <p>
+          <a class="btn btn-lg btn-primary" href="#" role="button">Join &raquo;</a>
+        </p>
+    </div>
 
-    <h1>SecureShare</h1>
-    <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
-    <p>To see the difference between static and fixed top navbars, just scroll.</p>
-    <p>
-      <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
-    </p>
+    <div class="col-sm-6" style="background-color:black;min-height:300px">
+
+    </div>
+</div>
 {% endblock %}
  
 
 
 {% block content %}
 <div class="row">
-  <div class="col-sm-6 col-md-4">
-        <h1>{{ title }}</h1>
-        <!-- In settings.py, the TEMPLATES h as auth and user hash values -->
-        {{ user }}
 
-        {{ request.user }}
+    <div class="col-xs-3 pull-right">
+        <p class='lead text-align-center'>{{ title }}</p>
 
         <!-- The method is POST because we want to send data. The action is where the data will be sent -->
         <form method='POST' action=''>{% csrf_token %}
@@ -36,6 +45,18 @@
         <input class='btn btn-primary' type='submit' value='Sign Up'>
 
         </form>
+    </div>
+
+    <div class="col-xs-3">
+        <p class='lead text-align-center'>Lorem Ipsum slipsum get some</p>
+    </div>
+
+    <div class="col-xs-3">
+        <p class='lead text-align-center'>Lorem Ipsum slipsum get some</p>
+    </div>
+
+    <div class="col-xs-3">
+        <p class='lead text-align-center'>Lorem Ipsum slipsum get some</p>
     </div>
 </div>
 
