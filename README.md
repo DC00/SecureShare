@@ -8,9 +8,11 @@
 Needed Third Party apps:
 
 Crispy Forms: http://django-crispy-forms.readthedocs.org/en/latest/install.html
+
 ```$ pip install --upgrade django-crispy-forms```
 
 
 Registration Redux
+
 ```$ pip install django-registration-redux```
 
