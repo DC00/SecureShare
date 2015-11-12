@@ -64,7 +64,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,6 +76,13 @@ TEMPLATES = [
         },
     },
 ]
+
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, "templates"),
+)
+
+
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
@@ -115,9 +122,10 @@ STATIC_URL = '/secureshare/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Can't add the root static folder
-# STATICFILES_DIRS = (
-#        os.path.join(BASE_DIR, "static"),
-# )
+STATICFILES_DIRS = (
+        # os.path.join(BASE_DIR, "static"),
+        # os.path.join(BASE_DIR, "secureshare/templates"),
+)
 
 MEDIA_URL = '/secureshare/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -128,5 +136,11 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 # Django registration redux settings
 ACCOUNT_ACTIVATION_DAYS = 7
 REGISTRATION_AUTO_LOGIN = True
+
+REGISTRATION_DEFAULT_FROM_EMAIL = False
+
+REGISTRATION_EMAIL_HTML = True
+
+REGISTRATION_AUTO_LOGIN = False
 
 
