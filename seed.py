@@ -5,7 +5,7 @@ from django.conf import settings
 
 
 from django.utils import timezone
-from secureshare.models import Report
+from secureshare.models import Report, Reporter
 
 import string
 import random
@@ -28,6 +28,10 @@ def random_paragraph(sentences=4):
         paragraph += random_sentence(random.randint(3, 8)) + " "
     return paragraph
 
+
 for i in range(25):
-    r = Report(created_at=timezone.now(), description=random_sentence(), full_description=random_paragraph())
-    r.save()
+    _reporter = Reporter(created_at=timezone.now(), first_name=random_text(), last_name=random_text)
+    _reporter.save()
+    _report = Report(created_at=timezone.now(), description=random_sentence(), full_description=random_paragraph(), reporter_it_belongs_to=_reporter, is_private=True)
+    _report.save()
+

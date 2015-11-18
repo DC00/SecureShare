@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'securewitness3_dev',
+        'NAME': 'sw4_dev',
         'USER': 'cood',
         'PASSWORD': 'supahot',
         'HOST': 'localhost',
