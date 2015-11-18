@@ -40,10 +40,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third party apps
-    'crispy_forms',
-    'registration',
-
     # Our apps
     'secureshare',
 )
@@ -92,7 +88,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'secureshare_dev',
+        'NAME': 'securewitness3_dev',
         'USER': 'cood',
         'PASSWORD': 'supahot',
         'HOST': 'localhost',

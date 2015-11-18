@@ -11,16 +11,5 @@ urlpatterns = [
 
     url(r'^reports/', include('secureshare.urls')),
 
-    url(r'^contact/$', 'secureshare.views.contact', name='contact'),
-
-    url(r'^about/$', 'secureshare.views.about', name='about'),
-
-    url(r'^$', 'secureshare.views.home', name='home'),
-
-    url(r'^accounts/', include('registration.backends.default.urls')),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
