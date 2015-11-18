@@ -4,7 +4,9 @@ from django.shortcuts import render
 from django.conf import settings
 
 
-from .models import Report
+from .models import Report, Reporter
+
+# from .forms import ReporterForm
 
 # Views let you create objects that can then be used in the template
 # def home(request):
