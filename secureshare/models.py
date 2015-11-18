@@ -6,7 +6,7 @@ class Reporter(models.Model):
     created_at = models.DateTimeField('date published')
 
     def __str__(self):
-       return "%s, %s" % (last_name, first_name)
+       return "%s, %s" % (self.last_name, self.first_name)
 
 class Report(models.Model):
     # See https://docs.djangoproject.com/en/1.8/ref/models/fields/ for explanations of model fields
@@ -23,24 +23,24 @@ class Report(models.Model):
     def __str__(self):
        return self.description
 
-# # Many Groups to Many Reporters
-# class Group(models.Model):
-#     name = models.CharField(max_length=120)
-#     members = models.ManyToManyField(Reporter, through='Membership')
+# Many Groups to Many Reporters
+class Group(models.Model):
+    name = models.CharField(max_length=120)
+    members = models.ManyToManyField(Reporter, through='Membership')
 
-#     def __str__(self):
-#       return self.name
+    def __str__(self):
+      return self.name
 
-# class Message(models.Model):
-#     created_at = models.DateTimeField('date published')
-#     content = models.TextField()
-#     is_private = models.BooleanField(default=False)
-#     group_it_belongs_to = models.ForeignKey(Group)
+class Message(models.Model):
+    created_at = models.DateTimeField('date published')
+    content = models.TextField()
+    is_private = models.BooleanField(default=False)
+    group_it_belongs_to = models.ForeignKey(Group)
 
-# # Intermediate model for the many-to-many relationship between Groups and Reporters
-# class Membership(models.Model):
-#     reporter = models.ForeignKey(Reporter)
-#     group = models.ForeignKey(Group)
+# Intermediate model for the many-to-many relationship between Groups and Reporters
+class Membership(models.Model):
+    reporter = models.ForeignKey(Reporter)
+    group = models.ForeignKey(Group)
 
 
 
