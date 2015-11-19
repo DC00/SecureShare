@@ -42,6 +42,7 @@ INSTALLED_APPS = (
 
     # Our apps
     'secureshare',
+    'crispy_forms',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -88,14 +89,13 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'sw4_dev',
-        'USER': 'cood',
-        'PASSWORD': 'supahot',
+        'NAME': 'ourapp',
+        'USER': 'max',
+        'PASSWORD': 'zenner',
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 

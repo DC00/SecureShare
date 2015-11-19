@@ -4,6 +4,7 @@ class Reporter(models.Model):
     first_name = models.CharField(max_length=120)
     last_name = models.CharField(max_length=120)
     created_at = models.DateTimeField('date published')
+    email = models.EmailField()
 
     def __str__(self):
        return "%s, %s" % (self.last_name, self.first_name)

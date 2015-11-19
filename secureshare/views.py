@@ -6,45 +6,45 @@ from django.conf import settings
 
 from .models import Report, Reporter
 
-# from .forms import ReporterForm
+from .forms import ReporterForm
 
 # Views let you create objects that can then be used in the template
-# def home(request):
-#     title = "Welcome to SecureWitness"
-#     # form = SignUpForm(request.POST or None)
+def home(request):
+    title = "Welcome to SecureWitness"
+    form = ReporterForm(request.POST or None)
 
-#     # if request.user.is_authenticated():
-#     #     title = "SecureWitness, Welcome %s" % (request.user)
+    if request.user.is_authenticated():
+        title = "SecureWitness, Welcome %s" % (request.user)
 
-#     # Evetything in this dictionary can be used in templates/home.html
-#     # Add forms to context to use them in the view
+    #Evetything in this dictionary can be used in templates/home.html
+    #Add forms to context to use them in the view
 
-#     # print(request)
-#     # if request.method == "POST":
-#     #     print(request.POST)
+    print(request)
+    if request.method == "POST":
+        print(request.POST)
 
-#     context = {
-#         'title': title,
-#         'form': form
-#     }
+    context = {
+        'title': title,
+        'form': form
+    }
 
-#     if form.is_valid():
+    if form.is_valid():
 
-#         # POST has a hash as well. Raw data. Don't do this
-#         # print(request.POST['email'])
+        # POST has a hash as well. Raw data. Don't do this
+        # print(request.POST['email'])
 
-#         instance = form.save(commit=False)
+        instance = form.save(commit=False)
 
 
-#         # commit=True
-#         instance.save()
-#         # print(instance.email)
-#         # print(instance.timestamp)
-#         context = {
-#             'title': "Thank you!",
-#         }
+        # commit=True
+        instance.save()
+        # print(instance.email)
+        # print(instance.timestamp)
+        context = {
+            'title': "Thank you!",
+        }
 
-#     return render(request, "home.html", context)
+    return render(request, "home.html", context)
 
 def index(request):
     latest_report_list = Report.objects.order_by('-created_at')
