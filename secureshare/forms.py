@@ -1,5 +1,5 @@
 from django import forms
-from .models import Reporter
+from .models import Reporter, Message
 
 class ReporterForm(forms.ModelForm):
     class Meta:
@@ -25,3 +25,9 @@ class ReporterForm(forms.ModelForm):
         # write validation code here like clean_email
 
         return full_name
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        # formats the admin signup form. Corresponds to the SignUp model
+        fields = ['content', 'is_private']
