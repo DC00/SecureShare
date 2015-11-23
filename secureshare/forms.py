@@ -5,32 +5,15 @@ class ReporterForm(forms.ModelForm):
     class Meta:
         model = Reporter
         # formats the admin signup form. Corresponds to the SignUp model
-        fields = ['last_name', 'email']
+        fields = ['first_name','last_name', 'email']
 
-    # overriding the function clean_email for extra validation
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        email_base, provider = email.split("@")
-        domain, extension = provider.split('.')
-
-        # if not domain == 'UVA':
-        #     raise forms.ValidationError("Please make sure you use your UVA email")
-
-        if not extension == "edu":
-            raise forms.ValidationError("Please use a valid .edu email address")
-        return email
-
-    def clean_full_name(self):
-        full_name = self.cleaned_data.get('full_name')
-        # write validation code here like clean_email
-
-        return full_name
+    
 
 class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
         # formats the message form. Corresponds to the SignUp model
-        fields = ['content', 'is_private']
+        fields = ['send_to','content', 'is_private']
 
 class ReportForm(forms.ModelForm):
     class Meta:

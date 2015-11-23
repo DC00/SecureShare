@@ -20,10 +20,17 @@
         <div class="row">
             <div class="col-sm-6">
                 <h1>SecureShare</h1>
-                <p>**Change this text to talk about SecureShare**</p>
+                
+                {% if flag %}
+                {{title}}
+                <p></p>
+                <a class="btn btn-lg btn-primary" href="/reports/" align ="center" role="button">Go to Reports&raquo;</a>
+                <a class="btn btn-lg btn-primary" href="/message/" align ="center" role="button">Go to Messages&raquo;</a>
+                {% else %}
                 <p>
-                  <a class="btn btn-lg btn-primary" href="#" role="button">Join &raquo;</a>
+                  <a class="btn btn-lg btn-primary" href="/signup/" align ="center" role="button">Join Now&raquo;</a>
                 </p>
+                {% endif %} 
             </div>
 
             <div class="col-sm-6" style="background-color:black;min-height:300px">
@@ -39,33 +46,3 @@
  
 
 
-{% block content %}
-<div class="row">
-
-    <div class="col-xs-3 pull-right">
-        <p class='lead text-align-center'>{{ title }}</p>
-
-        <!-- The method is POST because we want to send data. The action is where the data will be sent -->
-        <form method='POST' action='/reports/'>{% csrf_token %}
-        {{ form|crispy }}
-
-        <!-- When you click this button it adds a GET method. Same thing as going to a specific url -->
-        <input class='btn btn-primary' type='submit' value='Sign Up'>
-
-        </form>
-    </div>
-
-    <div class="col-xs-3">
-        <p class='lead text-align-center'>Lorem Ipsum slipsum get some</p>
-    </div>
-
-    <div class="col-xs-3">
-        <p class='lead text-align-center'>Lorem Ipsum slipsum get some</p>
-    </div>
-
-    <div class="col-xs-3">
-        <p class='lead text-align-center'>Lorem Ipsum slipsum get some</p>
-    </div>
-</div>
-
-{% endblock %}

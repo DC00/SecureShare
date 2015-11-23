@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+{{title}}
+<form method='POST' action='/sendmessage/'>{% csrf_token %}
+
+        {{ form|crispy }}
+
+        <!-- When you click this button it adds a GET method. Same thing as going to a specific url -->
+        <input class='btn btn-primary' type='submit' value='Send Message'>
+
+        </form>
+
+{% endblock %}

@@ -4,6 +4,7 @@
 
 {% block content %}
 
+<a class="btn btn-lg btn-primary" href="/sendmessage/" align ="center" role="button">Send New Message&raquo;</a>
 {% if latest_message_list %}
     <ul>
     {% for r in latest_message_list %}
@@ -14,14 +15,6 @@
     <p>No Messages yet.</p>
 {% endif %}
 
-<p>Still here.</p>
 
-<form method='POST' action='/sent/'>{% csrf_token %}
-        {{ form|crispy }}
-
-        <!-- When you click this button it adds a GET method. Same thing as going to a specific url -->
-        <input class='btn btn-primary' type='submit' value='Send Message'>
-
-        </form>
 
 {% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+
+
+{% block jumbotron %}
+
+      <!-- Main component for a primary marketing message or call to action -->
+<div class="col-xs-3 pull-left">
+        <p class='lead text-align-center'>{{ title }}</p>
+
+        <!-- The method is POST because we want to send data. The action is where the data will be sent -->
+        <form method='POST' action='home'>{% csrf_token %}
+        {{ form|crispy }}
+
+        <!-- When you click this button it adds a GET method. Same thing as going to a specific url -->
+        <input class='btn btn-primary' type='submit' value='Sign Up'>
+
+        </form>
+    </div>
+
+{% endblock %}
