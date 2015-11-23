@@ -1,0 +1,20 @@
+{% load crispy_forms_tags %}
+
+{% if latest_message_list %}
+    <ul>
+    {% for r in latest_message_list %}
+        <li><a href="/message/{{ r.id }}/">{{ r.content }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Messages yet.</p>
+{% endif %}
+
+
+<form method='POST' action='/message/sent/'>{% csrf_token %}
+        {{ form|crispy }}
+
+        <!-- When you click this button it adds a GET method. Same thing as going to a specific url -->
+        <input class='btn btn-primary' type='submit' value='Send Message'>
+
+        </form>

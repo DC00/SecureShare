@@ -1,5 +1,5 @@
 from django import forms
-from .models import Reporter, Message
+from .models import Reporter, Message, Report
 
 class ReporterForm(forms.ModelForm):
     class Meta:
@@ -29,5 +29,15 @@ class ReporterForm(forms.ModelForm):
 class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
-        # formats the admin signup form. Corresponds to the SignUp model
+        # formats the message form. Corresponds to the SignUp model
         fields = ['content', 'is_private']
+
+class ReportForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        # formats the message form. Corresponds to the SignUp model
+        fields = ['description', 'full_description']
+
+
+
+

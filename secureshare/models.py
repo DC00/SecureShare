@@ -11,7 +11,7 @@ class Reporter(models.Model):
 
 class Report(models.Model):
     # See https://docs.djangoproject.com/en/1.8/ref/models/fields/ for explanations of model fields
-    created_at = models.DateTimeField('date published')
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
     description = models.TextField()
     full_description = models.TextField()
     # TODO: make Report hold more than 1 file
@@ -33,10 +33,15 @@ class Group(models.Model):
       return self.name
 
 class Message(models.Model):
-    created_at = models.DateTimeField('date published')
-    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    content = models.TextField(default='jack')
     is_private = models.BooleanField(default=False)
-    group_it_belongs_to = models.ForeignKey(Group)
+    testfield = models.TextField(default='jack')
+    #group_it_belongs_to = models.ForeignKey(Group, default=None)
+    #send_to = models.ForeignKey(Reporter, default='SOME STRING')
+    def __str__(self):
+      return self.content
+
 
 # Intermediate model for the many-to-many relationship between Groups and Reporters
 class Membership(models.Model):

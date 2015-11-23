@@ -4,9 +4,9 @@ from django.shortcuts import render
 from django.conf import settings
 
 
-from .models import Report, Reporter
+from .models import Report, Reporter, Message
 
-from .forms import ReporterForm
+from .forms import ReporterForm, MessageForm, ReportForm
 
 # Views let you create objects that can then be used in the template
 def home(request):
@@ -48,14 +48,78 @@ def home(request):
 
 def index(request):
     latest_report_list = Report.objects.order_by('-created_at')
+    form = ReportForm(request.POST or None)
     
     # Loads the template at reports/index.html and passes it a context
     # the context is a dictionary mapping template variable names to Python objects
     # e.g. maps 'latest_report_list' -> latest_report_list
-    context = {'latest_report_list': latest_report_list}
+    context = {'latest_report_list': latest_report_list, 
+                'form' : form
+                }
+    if form.is_valid():
+
+        # POST has a hash as well. Raw data. Don't do this
+        # print(request.POST['email'])
+
+        instance = form.save(commit=False)
+
+
+        # commit=True
+        instance.save()
+        # print(instance.timestamp)
+        context = {
+            'title': "Thank you!",
+    }
     return render(request, 'reports/index.html', context)
+
+def windex(request):
+    form = MessageForm(request.POST or None)
+    
+    latest_message_list = Message.objects.order_by('-created_at')
+    title = 'my title'
+    context = {
+        'title': title,
+        'latest_message_list' : latest_message_list,
+        'form': form
+    }
+
+    if form.is_valid():
+
+        # POST has a hash as well. Raw data. Don't do this
+        # print(request.POST['email'])
+
+        instance = form.save(commit=False)
+
+
+        # commit=True
+        instance.save()
+        print(instance.content)
+        print(instance.created_at)
+        # print(instance.timestamp)
+        context = {
+            'title': "Thank you!",
+        }
+    
+    # Loads the template at reports/index.html and passes it a context
+    # the context is a dictionary mapping template variable names to Python objects
+    # e.g. maps 'latest_report_list' -> latest_report_list
+    
+    return render(request, 'message/index2.html', context)
+
+def sent(request):
+    return render(request, 'message/sent.html', [])
 
 def detail(request, report_id):
     return HttpResponse("You're looking at report %s." % report_id)
 
+def detail2(request, message_id):
+    return HttpResponse("You're looking at message %s." % message_id)
 
+
+
+
+
+
+
+
+  

@@ -13,5 +13,7 @@ urlpatterns = [
 
     url(r'^reports/', include('secureshare.urls')),
 
+    url(r'^message/', 'secureshare.views.windex', name='message'),
+
 ]
 

@@ -1,3 +1,6 @@
+{% load crispy_forms_tags %}
+
+<a class="btn btn-lg btn-primary" href="/message/" role="button">Private Messages &raquo;</a>
 {% if latest_report_list %}
     <ul>
     {% for r in latest_report_list %}
@@ -7,3 +10,11 @@
 {% else %}
     <p>No reports are available.</p>
 {% endif %}
+
+<form method='POST' action='/reports/'>{% csrf_token %}
+        {{ form|crispy }}
+
+        <!-- When you click this button it adds a GET method. Same thing as going to a specific url -->
+        <input class='btn btn-primary' type='submit' value='Submit report'>
+
+        </form>
