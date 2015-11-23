@@ -7,13 +7,8 @@ from django.contrib import sites
 
 urlpatterns = [
     # app that controls the admin site. Go to the adminn site at localhost:8000/admin
-    url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^$', 'secureshare.views.home', name='home'),
-
-    url(r'^reports/', include('secureshare.urls')),
-
-    url(r'^message/', 'secureshare.views.windex', name='message'),
+    #url(r'^message/', 'secureshare.views.windex', name='message'),
 
 ]
 

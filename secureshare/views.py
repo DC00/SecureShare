@@ -107,7 +107,7 @@ def windex(request):
     return render(request, 'message/index2.html', context)
 
 def sent(request):
-    return render(request, 'message/sent.html', [])
+    return render(request, 'sent.html', [])
 
 def detail(request, report_id):
     return HttpResponse("You're looking at report %s." % report_id)

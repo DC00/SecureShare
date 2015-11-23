@@ -1,6 +1,9 @@
+{% extends "base.html" %}
+
 {% load crispy_forms_tags %}
 
-<a class="btn btn-lg btn-primary" href="/message/" role="button">Private Messages &raquo;</a>
+{% block content %}
+
 {% if latest_report_list %}
     <ul>
     {% for r in latest_report_list %}
@@ -18,3 +21,5 @@
         <input class='btn btn-primary' type='submit' value='Submit report'>
 
         </form>
+
+{% endblock %}

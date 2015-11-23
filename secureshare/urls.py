@@ -1,15 +1,27 @@
-from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls import include, url
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.contrib import auth
+from django.contrib import sites
 
 from . import views
 
 urlpatterns = [
-    # /reports/
-    url(r'^$', views.index, name='index'),
 
-    url(r'^$', views.windex, name='windex'),
+	url(r'^admin/', include(admin.site.urls)),
+
+	url(r'^$', 'secureshare.views.home', name='home'),
+    # /reports/
+
+    url(r'^reports/', views.index, name='reports'),
+
+    url(r'^message/', views.windex, name='message'),
+
+    url(r'^sent/', views.sent, name='sent'),
 
     # /reports/5/
-    url(r'^(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
+    url(r'^reports/(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
 
-    url(r'^(?P<message_id>[0-9]+)/$', views.detail2, name='detail2'),
+    url(r'^message/(?P<message_id>[0-9]+)/$', views.detail2, name='detail2'),
 ]
