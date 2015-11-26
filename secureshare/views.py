@@ -3,10 +3,14 @@ from django.template import RequestContext, loader
 from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import redirect
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from django.contrib.auth import logout
+from django.contrib.auth import login
 
 from .models import Report, Reporter, Message
 
-from .forms import ReporterForm, MessageForm, ReportForm
+from .forms import ReporterForm, MessageForm, ReportForm, ReporterForm2
 
 # Views let you create objects that can then be used in the template
 def home(request):
@@ -50,28 +54,13 @@ def home(request):
 
 def index(request):
     latest_report_list = Report.objects.order_by('-created_at')
-    form = ReportForm(request.POST or None)
     
     # Loads the template at reports/index.html and passes it a context
     # the context is a dictionary mapping template variable names to Python objects
     # e.g. maps 'latest_report_list' -> latest_report_list
     context = {'latest_report_list': latest_report_list, 
-                'form' : form
-                }
-    if form.is_valid():
-
-        # POST has a hash as well. Raw data. Don't do this
-        # print(request.POST['email'])
-
-        instance = form.save(commit=False)
-
-
-        # commit=True
-        instance.save()
-        # print(instance.timestamp)
-        context = {
-            'title': "Thank you!",
-    }
+            }
+    
     return render(request, 'reports/index.html', context)
 
 def windex(request):
@@ -160,7 +149,7 @@ def createreport(request):
         }
         return redirect('secureshare.views.index')
         
-    return render(request, 'reports/index.html', context)
+    return render(request, 'createreport.html', context)
 
 def sent(request):
     return render(request, 'sent.html', [])
@@ -169,7 +158,8 @@ def detail(request, report_id):
     return HttpResponse("You're looking at report %s." % report_id)
 
 def detail2(request, message_id):
-    return HttpResponse("You're looking at message %s." % message_id)
+
+    return render(request, 'createreport.html', context)
 
 
 def signup(request):
@@ -189,12 +179,49 @@ def signup(request):
         # print(request.POST['email'])
 
         instance = form.save(commit=False)
-
-
+        user = User.objects.create_user(instance.user_name, instance.email, instance.password)
+        instance.user = user
         # commit=True
         instance.save()
         print(instance.email)
-        print(instance.last_name)
+
+        context = {
+            'title': "Thank you!",
+        
+        }
+        return redirect('secureshare.views.index')
+    return render(request, 'signin.html', context)
+
+
+def signin(request):
+    form = ReporterForm2(request.POST or None)
+
+    title = 'HELLO, PLEASE SIGN IN'
+    #Add forms to context to use them in the view
+
+    context = {
+        'title': title,
+        'form': form
+    }
+
+    if form.is_valid():
+        # POST has a hash as well. Raw data. Don't do this
+        # print(request.POST['email'])
+
+        instance = form.save(commit=False)
+        user = authenticate(username=instance.user_name, password=instance.password)
+        if user is not None:
+        # the password verified for the user
+            if user.is_active:
+                login(request, user)
+                return redirect('secureshare.views.index')
+            else:
+                print("The password is valid, but the account has been disabled!")
+        else:
+        # the authentication system was unable to verify the username and password
+            print("The username and password were incorrect.")
+            return redirect('secureshare.views.signin')
+        
 
         context = {
             'title': "Thank you!",
@@ -202,7 +229,8 @@ def signup(request):
     
     return render(request, 'signup.html', context)
 
-
-
+def logout_view(request):
+    logout(request)
+    return render(request, 'home.html', [])
 
   

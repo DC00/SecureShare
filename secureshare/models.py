@@ -1,13 +1,16 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 # TODO: Need to use Reporter instead of SignUp
 class Reporter(models.Model):
-    first_name = models.CharField(max_length=120)
-    last_name = models.CharField(max_length=120)
+    user_name = models.CharField(max_length=120, null=True)
+    password = models.CharField(max_length=120, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     email = models.EmailField()
+    user = models.OneToOneField(User, blank=True, null=True)
 
     def __str__(self):
-       return "%s, %s" % (self.last_name, self.first_name)
+       return(self.user_name)
 
 class Report(models.Model):
     # See https://docs.djangoproject.com/en/1.8/ref/models/fields/ for explanations of model fields

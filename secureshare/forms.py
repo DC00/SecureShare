@@ -5,9 +5,13 @@ class ReporterForm(forms.ModelForm):
     class Meta:
         model = Reporter
         # formats the admin signup form. Corresponds to the SignUp model
-        fields = ['first_name','last_name', 'email']
+        fields = ['user_name', 'password', 'email']
 
-    
+class ReporterForm2(forms.ModelForm):
+    class Meta:
+        model = Reporter
+        # formats the admin signup form. Corresponds to the SignUp model
+        fields = ['user_name', 'password']
 
 class MessageForm(forms.ModelForm):
     class Meta:

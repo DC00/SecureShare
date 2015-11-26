@@ -25,6 +25,10 @@ urlpatterns = [
 
     url(r'^sent/', views.sent, name='sent'),
     url(r'^signup/', views.signup, name='signup'),
+    url(r'^signin/', views.signin, name='signin'),
+    url(r'^signout/', views.logout_view, name='logout_view'),
+
+
 
     # /reports/5/
     url(r'^reports/(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
