@@ -12,21 +12,38 @@ urlpatterns = [
 	url(r'^admin/', include(admin.site.urls)),
 
 	url(r'^$', 'secureshare.views.home', name='home'),
-    # /reports/
+
+
+
 
     url(r'^reports/', views.index, name='reports'),
-
+    
     url(r'^message/', views.windex, name='message'),
+    
+    url(r'^groups/', views.gindex, name='groups'),
 
+
+
+
+    
     url(r'^sendmessage/', views.sendmessage, name='sendmessage'),
 
+    url(r'^creategroup/', views.creategroup, name='creategroup'),
+    
     url(r'^createreport/', views.createreport, name='createreport'),
 
 
+
+
     url(r'^sent/', views.sent, name='sent'),
+
+
+
+    
     url(r'^signup/', views.signup, name='signup'),
     url(r'^signin/', views.signin, name='signin'),
     url(r'^signout/', views.logout_view, name='logout_view'),
+
 
 
 

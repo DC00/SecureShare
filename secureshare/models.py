@@ -18,8 +18,8 @@ class Report(models.Model):
     description = models.TextField()
     full_description = models.TextField()
     # TODO: make Report hold more than 1 file
-    uploaded_files = models.FileField(default=None)
-    is_private = models.BooleanField(default=True)
+    uploaded_files = models.FileField(default=None, blank=True)
+    is_private = models.BooleanField(default=True, blank=True)
     
     # Foreign key for relationship to a Reporter. Many Reports to One Reporter
     reporter_it_belongs_to = models.ForeignKey(Reporter, blank=True, null=True, on_delete=models.SET_NULL)
@@ -37,8 +37,7 @@ class Group(models.Model):
 
 class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
-    content = models.TextField(default='jack')
-    is_private = models.BooleanField(default=False)
+    content = models.TextField(default='defualt Message')
     #group_it_belongs_to = models.ForeignKey(Group, default=None)
     send_to = models.ForeignKey(Reporter, blank=True, null=True, on_delete=models.SET_NULL)
     

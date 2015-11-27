@@ -1,5 +1,5 @@
 from django import forms
-from .models import Reporter, Message, Report
+from .models import Reporter, Message, Report, Group
 
 class ReporterForm(forms.ModelForm):
     class Meta:
@@ -17,14 +17,17 @@ class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
         # formats the message form. Corresponds to the SignUp model
-        fields = ['send_to','content', 'is_private']
+        fields = ['send_to','content']
 
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
         # formats the message form. Corresponds to the SignUp model
-        fields = ['description', 'full_description']
+        fields = ['description', 'full_description', 'is_private']
 
-
+class GroupForm(forms.Form):
+    name = forms.CharField(label='Group Name:')
+    Reporter_choices = [[x.id, x.user_name] for x in Reporter.objects.all()]
+    Select_Users= forms.MultipleChoiceField(choices=Reporter_choices, widget=forms.CheckboxSelectMultiple(), required=False)
 
 
