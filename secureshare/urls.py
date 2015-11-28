@@ -51,6 +51,8 @@ urlpatterns = [
     # url(r'^reports/(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
     url(r'^reports/(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
 
+    url(r'^reports/(?P<report_id>[0-9]+)/download$', views.download_report, name='detail'),
+
 
     url(r'^message/(?P<message_id>[0-9]+)/$', views.detail2, name='detail2'),
 ]

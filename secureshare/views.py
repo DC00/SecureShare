@@ -67,6 +67,25 @@ def index(request):
     
     return render(request, 'reports/index.html', context)
 
+
+def download_report(request, report_id):
+    report = Report.objects.get(id=report_id)
+    make_downloadable_report(report, report_id)
+    path_to_file = "static/downloadable_reports/report_%s.txt" % (report_id)
+    f = open(path_to_file, 'r')
+    response = HttpResponse(f, content_type='text/plain')
+    response['Content-Disposition'] = "attachment; filename=report_%s.txt" % (report.id)
+    return response
+
+def make_downloadable_report(report, report_id):
+    path_to_file = "static/downloadable_reports/report_%s.txt" % (report_id)
+    fw = open(path_to_file, 'w')
+    fw.write("Description: %s \n" % (report.description)) 
+    fw.write("Full Description: %s \n" % (report.full_description)) 
+    fw.write("Reporter: %s \n" % (report.reporter_it_belongs_to)) 
+    fw.close()
+
+
 def windex(request):
     form = MessageForm(request.POST or None)
     
