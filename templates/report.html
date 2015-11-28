@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Description</h3>
+  </div>
+  <div class="panel-body">
+    {{report.description}}
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Full Description</h3>
+  </div>
+  <div class="panel-body">
+    {{report.full_description}}
+  </div>
+ </div>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Reporter</h3>
+  </div>
+  <div class="panel-body">
+    {{report.reporter_it_belongs_to}}
+  </div>
+</div>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Private?</h3>
+  </div>
+  <div class="panel-body">
+    {{report.is_private}}
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Created At</h3>
+  </div>
+  <div class="panel-body">
+    {{report.created_at}}
+  </div>
+</div>
+
+
+{% endblock %}

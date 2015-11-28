@@ -53,15 +53,38 @@ def home(request):
     return render(request, "home.html", context)
 
 def index(request):
-    latest_report_list = Report.objects.order_by('-created_at')
-    
+    # Want to display only the reports of the user that's logged in
+    user_report_list = []
+    if request.user.is_authenticated():
+        logged_in_reporter = Reporter.objects.get(user_name=request.user)
+        user_report_list = Report.objects.all().filter(reporter_it_belongs_to=logged_in_reporter)
+
     # Loads the template at reports/index.html and passes it a context
     # the context is a dictionary mapping template variable names to Python objects
     # e.g. maps 'latest_report_list' -> latest_report_list
-    context = {'latest_report_list': latest_report_list, 
+    context = {'user_report_list': user_report_list, 
             }
     
     return render(request, 'reports/index.html', context)
+
+
+def download_report(request, report_id):
+    report = Report.objects.get(id=report_id)
+    make_downloadable_report(report, report_id)
+    path_to_file = "static/downloadable_reports/report_%s.txt" % (report_id)
+    f = open(path_to_file, 'r')
+    response = HttpResponse(f, content_type='text/plain')
+    response['Content-Disposition'] = "attachment; filename=report_%s.txt" % (report.id)
+    return response
+
+def make_downloadable_report(report, report_id):
+    path_to_file = "static/downloadable_reports/report_%s.txt" % (report_id)
+    fw = open(path_to_file, 'w')
+    fw.write("Description: %s \n" % (report.description)) 
+    fw.write("Full Description: %s \n" % (report.full_description)) 
+    fw.write("Reporter: %s \n" % (report.reporter_it_belongs_to)) 
+    fw.close()
+
 
 def windex(request):
     form = MessageForm(request.POST or None)
@@ -156,9 +179,9 @@ def createreport(request):
         # print(request.POST['email'])
         print('we were in here')
         instance = form.save(commit=False)
+        instance.reporter_it_belongs_to = Reporter.objects.get(user_name=request.user)
         # commit=True
         instance.save()
-        
         # print(instance.timestamp)
         context = {
             'title': "Thank you!",
@@ -194,10 +217,15 @@ def sent(request):
     return render(request, 'sent.html', [])
 
 def detail(request, report_id):
-    return HttpResponse("You're looking at report %s." % report_id)
+    report = Report.objects.get(id=report_id)
+    context = {
+        'report' : report
+    }
+
+    return render(request, 'report.html', context)
+    # return HttpResponse("You're looking at report %s." % report_id)
 
 def detail2(request, message_id):
-
     return render(request, 'createreport.html', context)
 
 
@@ -228,7 +256,7 @@ def signup(request):
             'title': "Thank you!",
         
         }
-        return redirect('secureshare.views.index')
+        return redirect('secureshare.views.home')
     return render(request, 'signin.html', context)
 
 

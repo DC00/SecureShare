@@ -1,4 +1,4 @@
-{% if latest_report_list %}
+{% if user_report_list %}
     <ul>
     {% for r in latest_report_list %}
         <li><a href="/reports/{{ r.id }}/">{{ r.description }}</a></li>
