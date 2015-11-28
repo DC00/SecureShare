@@ -200,10 +200,15 @@ def sent(request):
     return render(request, 'sent.html', [])
 
 def detail(request, report_id):
-    return HttpResponse("You're looking at report %s." % report_id)
+    report = Report.objects.get(id=report_id)
+    context = {
+        'report' : report
+    }
+
+    return render(request, 'report.html', context)
+    # return HttpResponse("You're looking at report %s." % report_id)
 
 def detail2(request, message_id):
-
     return render(request, 'createreport.html', context)
 
 
