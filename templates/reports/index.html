@@ -4,10 +4,9 @@
 
 {% block content %}
 <a class="btn btn-lg btn-primary" href="/createreport/" align ="center" role="button">Make New Report&raquo;</a>
-
-{% if latest_report_list %}
+{% if user_report_list %}
     <ul>
-    {% for r in latest_report_list %}
+    {% for r in user_report_list %}
         <li><a href="/reports/{{ r.id }}/">{{ r.description }}</a></li>
     {% endfor %}
     </ul>

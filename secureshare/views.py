@@ -53,12 +53,16 @@ def home(request):
     return render(request, "home.html", context)
 
 def index(request):
-    latest_report_list = Report.objects.order_by('-created_at')
-    
+    # Want to display only the reports of the user that's logged in
+    user_report_list = []
+    if request.user.is_authenticated():
+        logged_in_reporter = Reporter.objects.get(user_name=request.user)
+        user_report_list = Report.objects.all().filter(reporter_it_belongs_to=logged_in_reporter)
+
     # Loads the template at reports/index.html and passes it a context
     # the context is a dictionary mapping template variable names to Python objects
     # e.g. maps 'latest_report_list' -> latest_report_list
-    context = {'latest_report_list': latest_report_list, 
+    context = {'user_report_list': user_report_list, 
             }
     
     return render(request, 'reports/index.html', context)
@@ -156,9 +160,9 @@ def createreport(request):
         # print(request.POST['email'])
         print('we were in here')
         instance = form.save(commit=False)
+        instance.reporter_it_belongs_to = Reporter.objects.get(user_name=request.user)
         # commit=True
         instance.save()
-        
         # print(instance.timestamp)
         context = {
             'title': "Thank you!",
@@ -230,7 +234,7 @@ def signup(request):
             'title': "Thank you!",
         
         }
-        return redirect('secureshare.views.index')
+        return redirect('secureshare.views.home')
     return render(request, 'signin.html', context)
 
 
