@@ -174,17 +174,15 @@ def creategroup(request):
         'title': title,
         'form': form
     }
-    print(' bad?')  
+    print(' bad?') 
+
     if form.is_valid():
 
         # POST has a hash as well. Raw data. Don't do this
         # print(request.POST['email'])
         print('form good!')
-        instance = form.save(commit=False)
-
         # commit=True
-        instance.save()
-        print(instance.name)
+        print(form)
         context = {
             'title': "Thank you!",
         }

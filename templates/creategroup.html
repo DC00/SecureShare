@@ -4,7 +4,7 @@
 
 {% block content %}
 {{title}}
-<form method='POST' action='/groups/'>{% csrf_token %}
+<form method='POST' action=''>{% csrf_token %}
 
         {{ form|crispy }}
 
