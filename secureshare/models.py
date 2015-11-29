@@ -39,8 +39,8 @@ class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     content = models.TextField(default='defualt Message')
     #group_it_belongs_to = models.ForeignKey(Group, default=None)
-    send_to = models.ForeignKey(Reporter, blank=True, null=True, on_delete=models.SET_NULL)
-    
+    send_to = models.ForeignKey(Reporter, blank=True, null=True, on_delete=models.SET_NULL, related_name='send_to')
+    sender = models.ForeignKey(Reporter, blank=True, null=True, on_delete=models.SET_NULL, related_name='sender')
     def __str__(self):
       return self.content
 

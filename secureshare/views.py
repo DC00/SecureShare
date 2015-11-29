@@ -8,14 +8,13 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import logout
 from django.contrib.auth import login
 
-from .models import Report, Reporter, Message, Group
+from .models import Report, Reporter, Message, Group, Membership
 
 from .forms import ReporterForm, MessageForm, ReportForm, ReporterForm2, GroupForm
 
 # Views let you create objects that can then be used in the template
 def home(request):
     title = "Welcome to SecureWitness"
-    form = ReporterForm(request.POST or None)
     flag = False
     if request.user.is_authenticated():
         flag = True
@@ -30,26 +29,8 @@ def home(request):
 
     context = {
         'title': title,
-        'form': form,
         'flag': flag
     }
-
-    if form.is_valid():
-
-        # POST has a hash as well. Raw data. Don't do this
-        # print(request.POST['email'])
-
-        instance = form.save(commit=False)
-
-
-        # commit=True
-        instance.save()
-        # print(instance.email)
-        # print(instance.timestamp)
-        context = {
-            'title': "Thank you!",
-        }
-
     return render(request, "home.html", context)
 
 def index(request):
@@ -68,57 +49,21 @@ def index(request):
     return render(request, 'reports/index.html', context)
 
 
-def download_report(request, report_id):
-    report = Report.objects.get(id=report_id)
-    make_downloadable_report(report, report_id)
-    path_to_file = "static/downloadable_reports/report_%s.txt" % (report_id)
-    f = open(path_to_file, 'r')
-    response = HttpResponse(f, content_type='text/plain')
-    response['Content-Disposition'] = "attachment; filename=report_%s.txt" % (report.id)
-    return response
-
-def make_downloadable_report(report, report_id):
-    path_to_file = "static/downloadable_reports/report_%s.txt" % (report_id)
-    fw = open(path_to_file, 'w')
-    fw.write("Description: %s \n" % (report.description)) 
-    fw.write("Full Description: %s \n" % (report.full_description)) 
-    fw.write("Reporter: %s \n" % (report.reporter_it_belongs_to)) 
-    fw.close()
 
 
 def windex(request):
-    form = MessageForm(request.POST or None)
-    
-    latest_message_list = Message.objects.order_by('-created_at')
-    title = 'my title'
+    title = 'Welcome to Messages'
+
+    latest_message_list = []
+    if request.user.is_authenticated():
+        logged_in_reporter = Reporter.objects.get(user_name=request.user)
+        latest_message_list = Message.objects.all().filter(send_to=logged_in_reporter)
+        #latest_message_list.sort(key=lambda x: x.created_at.lower())
     context = {
         'title': title,
         'latest_message_list' : latest_message_list,
-        'form' : form,
     }
 
-    if form.is_valid():
-
-        # POST has a hash as well. Raw data. Don't do this
-        # print(request.POST['email'])
-
-        instance = form.save(commit=False)
-        instance.reporter_it_belongs_to = request.user 
-        print(instance.reporter_it_belongs_to)
-        # commit=True
-        instance.save()
-
-        print(instance.content)
-        print(instance.created_at)
-        # print(instance.timestamp)
-        context = {
-            'title': "Thank you!",
-        }
-
-        # Loads the template at reports/index.html and passes it a context
-    # the context is a dictionary mapping template variable names to Python objects
-    # e.g. maps 'latest_report_list' -> latest_report_list
-    
     return render(request, 'message/index2.html', context)
 
 def gindex(request):
@@ -152,7 +97,7 @@ def sendmessage(request):
         # print(request.POST['email'])
 
         instance = form.save(commit=False)
-        instance.reporter_it_belongs_to = request.user 
+        instance.sender = Reporter.objects.get(user_name=request.user)
         # commit=True
         instance.save()
         print('we were here')
@@ -171,14 +116,13 @@ def createreport(request):
         'title': title,
         'form': form
     }
-    print('we were here')
 
     if form.is_valid():
 
         # POST has a hash as well. Raw data. Don't do this
         # print(request.POST['email'])
-        print('we were in here')
         instance = form.save(commit=False)
+        print(request.user)
         instance.reporter_it_belongs_to = Reporter.objects.get(user_name=request.user)
         # commit=True
         instance.save()
@@ -197,20 +141,22 @@ def creategroup(request):
         'title': title,
         'form': form
     }
-    print(' bad?') 
 
     if form.is_valid():
 
         # POST has a hash as well. Raw data. Don't do this
         # print(request.POST['email'])
-        print('form good!')
         # commit=True
-        print(form)
+        g_thang = Group.objects.create(name=form.cleaned_data['name'])
+        g_thang.save()
+        for u in form.cleaned_data['Select_Users']:
+            m_thang = Membership.objects.create(reporter=Reporter.objects.get(pk=u), group=g_thang)
+        #print(form.cleaned_data['Select_Users'])
+        
         context = {
             'title': "Thank you!",
         }
         return redirect('secureshare.views.gindex')
-    print('form bad!')    
     return render(request, 'creategroup.html', context)
 
 def sent(request):
@@ -226,8 +172,16 @@ def detail(request, report_id):
     # return HttpResponse("You're looking at report %s." % report_id)
 
 def detail2(request, message_id):
-    return render(request, 'createreport.html', context)
+    print('passed though here')
+    message = Message.objects.get(id=message_id)
+    context = {
+        'Message' : message
+    }
 
+    return render(request, 'message.html', context)
+
+def detail3(request, group_id):
+    return render(request, 'gindex.html', context)
 
 def signup(request):
     form = ReporterForm(request.POST or None)
@@ -295,6 +249,23 @@ def signin(request):
         }
     
     return render(request, 'signup.html', context)
+
+def download_report(request, report_id):
+    report = Report.objects.get(id=report_id)
+    make_downloadable_report(report, report_id)
+    path_to_file = "static/downloadable_reports/report_%s.txt" % (report_id)
+    f = open(path_to_file, 'r')
+    response = HttpResponse(f, content_type='text/plain')
+    response['Content-Disposition'] = "attachment; filename=report_%s.txt" % (report.id)
+    return response
+
+def make_downloadable_report(report, report_id):
+    path_to_file = "static/downloadable_reports/report_%s.txt" % (report_id)
+    fw = open(path_to_file, 'w')
+    fw.write("Description: %s \n" % (report.description)) 
+    fw.write("Full Description: %s \n" % (report.full_description)) 
+    fw.write("Reporter: %s \n" % (report.reporter_it_belongs_to)) 
+    fw.close()
 
 def logout_view(request):
     logout(request)

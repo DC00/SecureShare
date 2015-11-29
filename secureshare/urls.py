@@ -18,7 +18,7 @@ urlpatterns = [
 
     url(r'^reports/$', views.index, name='reports'),
     
-    url(r'^message/', views.windex, name='message'),
+    url(r'^message/$', views.windex, name='message'),
     
     url(r'^groups/', views.gindex, name='groups'),
 
@@ -46,13 +46,14 @@ urlpatterns = [
 
 
 
-
-    # /reports/5/
-    # url(r'^reports/(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
-    url(r'^reports/(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
-
+    #COO's shiz
     url(r'^reports/(?P<report_id>[0-9]+)/download$', views.download_report, name='detail'),
 
 
+    # url(r'^reports/(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
+    url(r'^reports/(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
     url(r'^message/(?P<message_id>[0-9]+)/$', views.detail2, name='detail2'),
+    url(r'^group/(?P<group_id>[0-9]+)/$', views.detail3, name='detail3'),
+
+
 ]
