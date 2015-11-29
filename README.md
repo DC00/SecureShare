@@ -19,10 +19,10 @@ When you run ```pip freeze``` these things should be installed
 **Pycrypto >= 2.6** <br>
 ```$ pip install psycopg2```
 
-**Requests >= 2.8**
+**Requests >= 2.8** <br>
 ```$ pip install requests```
 
-**BeautifulSoup >= 4.4**
+**BeautifulSoup >= 4.4** <br>
 ```$ pip install beautifulsoup4``` 
 
 
