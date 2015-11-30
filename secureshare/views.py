@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import logout
 from django.contrib.auth import login
+from django.utils import timezone
 
 from .models import Report, Reporter, Message, Group, Membership
 
@@ -36,14 +37,29 @@ def home(request):
 def index(request):
     # Want to display only the reports of the user that's logged in
     user_report_list = []
+    user_made_report_list =[]
     if request.user.is_authenticated():
         logged_in_reporter = Reporter.objects.get(user_name=request.user)
-        user_report_list = Report.objects.all().filter(reporter_it_belongs_to=logged_in_reporter)
+        for t in Report.objects.all():
+            
+            for r in t.reporters_that_can_view.all():
+                if r.user_name==logged_in_reporter.user_name:
+                    user_report_list.append(t)
 
+            
+            for s in t.groups_that_can_view.all():
+                for u in s.members.all():
+                    if u.user_name==logged_in_reporter.user_name:
+                        if t not in user_report_list:
+                            user_report_list.append(t)
+
+            if t.reporter_it_belongs_to==logged_in_reporter: 
+                user_made_report_list.append(t)           
     # Loads the template at reports/index.html and passes it a context
     # the context is a dictionary mapping template variable names to Python objects
     # e.g. maps 'latest_report_list' -> latest_report_list
-    context = {'user_report_list': user_report_list, 
+    context = {'user_report_list': user_report_list,
+    'user_made_report_list': user_made_report_list, 
             }
     
     return render(request, 'reports/index.html', context)
@@ -121,11 +137,15 @@ def createreport(request):
 
         # POST has a hash as well. Raw data. Don't do this
         # print(request.POST['email'])
-        instance = form.save(commit=False)
-        print(request.user)
-        instance.reporter_it_belongs_to = Reporter.objects.get(user_name=request.user)
+        
+        r_thang = Report.objects.create(description=form.cleaned_data['description'], full_description=form.cleaned_data['full_description'],is_private=form.cleaned_data['is_private'])
+        for u in form.cleaned_data['Select_Users']:
+            r_thang.reporters_that_can_view.add(Reporter.objects.get(pk=u))
+        for s in form.cleaned_data['Select_Groups']:
+            r_thang.groups_that_can_view.add(Group.objects.get(pk=s))
+        r_thang.reporter_it_belongs_to = Reporter.objects.get(user_name=request.user)
         # commit=True
-        instance.save()
+        r_thang.save()
         # print(instance.timestamp)
         context = {
             'title': "Thank you!",
@@ -133,6 +153,17 @@ def createreport(request):
         return redirect('secureshare.views.index')
         
     return render(request, 'createreport.html', context)
+
+# def editreport(request, report_id):
+    
+#     my_record = Report.objects.get(id=report_id)
+#     form = ReportForm2(instance=my_record)
+#     title = 'Send New Report'
+#     context = {
+#         'title': title,
+#         'form': form
+#     }
+#     return render(request, 'index.html', context)
 
 def creategroup(request):
     form = GroupForm(request.POST or None)
@@ -151,6 +182,7 @@ def creategroup(request):
         g_thang.save()
         for u in form.cleaned_data['Select_Users']:
             m_thang = Membership.objects.create(reporter=Reporter.objects.get(pk=u), group=g_thang)
+            m_thang.save()
         #print(form.cleaned_data['Select_Users'])
         
         context = {
@@ -164,15 +196,23 @@ def sent(request):
 
 def detail(request, report_id):
     report = Report.objects.get(id=report_id)
+    logged_in_reporter = Reporter.objects.get(user_name=request.user)
+
     context = {
-        'report' : report
+        'report' : report,
+        'logged_in_reporter' : logged_in_reporter
     }
+
 
     return render(request, 'report.html', context)
     # return HttpResponse("You're looking at report %s." % report_id)
 
+def deletereport(request, report_id):
+    Report.objects.get(id=report_id).delete()
+    return render(request, 'reports/index.html', [])
+
+
 def detail2(request, message_id):
-    print('passed though here')
     message = Message.objects.get(id=message_id)
     context = {
         'Message' : message
@@ -248,7 +288,7 @@ def signin(request):
             'title': "Thank you!",
         }
     
-    return render(request, 'signup.html', context)
+    return render(request, 'signin.html', context)
 
 def download_report(request, report_id):
     report = Report.objects.get(id=report_id)

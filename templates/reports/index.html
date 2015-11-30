@@ -4,14 +4,36 @@
 
 {% block content %}
 <a class="btn btn-lg btn-primary" href="/createreport/" align ="center" role="button">Make New Report&raquo;</a>
+<br>
+<br>
+
+
+
+
+<p>Below are reports that have been shared with you</p>
 {% if user_report_list %}
-    <ul>
+    <ul id="reports">
     {% for r in user_report_list %}
         <li><a href="/reports/{{ r.id }}/">{{ r.description }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
     <p>No reports are available.</p>
+{% endif %}
+
+
+
+
+
+{% if user_made_report_list %}
+	<p>Below are reports you have created</p>
+    <ul id="reports">
+    {% for r in user_made_report_list %}
+        <li><a href="/reports/{{ r.id }}/">{{ r.description }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>You have not made any reports.</p>
 {% endif %}
 
 

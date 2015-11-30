@@ -19,15 +19,31 @@ class MessageForm(forms.ModelForm):
         # formats the message form. Corresponds to the SignUp model
         fields = ['send_to','content']
 
-class ReportForm(forms.ModelForm):
-    class Meta:
-        model = Report
-        # formats the message form. Corresponds to the SignUp model
-        fields = ['description', 'full_description', 'is_private']
+class ReportForm(forms.Form):
+    description = forms.CharField(label='description:')
+    full_description = forms.CharField(label='full_description:')
+    is_private = forms.BooleanField(label='make_private:')
+    uploaded_files = forms.FileField(label='Attached Files:')
+    Reporter_choices = [[x.id, x.user_name] for x in Reporter.objects.all()]
+    Select_Users= forms.MultipleChoiceField(label='Select Users', choices=Reporter_choices, widget=forms.CheckboxSelectMultiple(), required=False)
+    Group_choices = [[y.id, y.name] for y in Group.objects.all()]
+    Select_Groups= forms.MultipleChoiceField(label='Select Groups', choices=Group_choices, widget=forms.CheckboxSelectMultiple(), required=False)
 
+# class ReportForm2(forms.ModelForm):
+#     class Meta:
+#         model = Message
+#         # formats the message form. Corresponds to the SignUp model
+#         fields = ['description','full_description','is_private','uploaded_files']   
 class GroupForm(forms.Form):
     name = forms.CharField(label='Group Name:')
     Reporter_choices = [[x.id, x.user_name] for x in Reporter.objects.all()]
     Select_Users= forms.MultipleChoiceField(choices=Reporter_choices, widget=forms.CheckboxSelectMultiple(), required=False)
 
 
+    # description = forms.CharField(label='Group Name:')
+    # full_description = forms.CharField(label='Group Name:')
+    # uploaded_files = forms.FileField(label='Attached Files:')
+    # Reporter_choices = [[x.id, x.user_name] for x in Reporter.objects.all()]
+    # Select_Users= forms.MultipleChoiceField(label='Select Users', choices=Reporter_choices, widget=forms.CheckboxSelectMultiple(), required=False)
+    # Group_choices = [[y.id, y.user_name] for y in Group.objects.all()]
+    # Select_Groups= forms.MultipleChoiceField(label='Select Groups', choices=Reporter_choices, widget=forms.CheckboxSelectMultiple(), required=False)
