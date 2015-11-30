@@ -223,7 +223,8 @@ def mainMenu():
         elif choice == '2':
             os.system('clear')
             filename = raw_input('Enter the name of the file you want to decrypt: ')
-            decrypt_file(filename, 'this is a secure key')
+	    securekey = raw_input('Enter the key: ')
+            decrypt_file(filename, key)
         elif choice == '3':
             os.system('clear')
             logIn()
