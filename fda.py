@@ -93,6 +93,20 @@ def decrypt_file(fileName, key):
         print
         print output
 
+def encrypt_file(fileName, key):
+    if not os.path.isfile(fileName):
+        print('\nTHAT FILE IS NOT IN THE CURRENT DIRECTORY OR DOES NOT EXIST. PLEASE TRY AGAIN\n')
+        return False
+    f = open(fileName, 'rb')
+    f2 = open(fileName+'.enc', 'wb')
+    key_size8 = key[0:8]
+    cipher = DES.new(key_size8, DES.MODE_CFB, iv)
+    for line in f:
+	f2.write(cipher.encrypt(line))
+        print '\n'
+        print fileName+'.enc is encrypted and saved to the current directory'
+        print
+
 def logIn():
     print('Please Log In')
     user_name = raw_input('Username: ')
@@ -112,7 +126,7 @@ def logIn():
       'password': password,
       'csrfmiddlewaretoken' : csrftoken,
     }
-    print(login_data)
+    #print(login_data)
  
     # Authenticate
     response = client.post(URL_SIGNIN, data=login_data)
@@ -210,9 +224,10 @@ def mainMenu():
     while True:
         print('Please select one of the following options.')
         print('1. View/Download Articles')
-        print('2. Decrypt File')
-        print('3. Relog In')
-        print('4. Display Remote Reports')
+	print('2. Encryt File')
+        print('3. Decrypt File')
+        print('4. Relog In')
+        print('5. Display Remote Reports')
         print('0. Quit')
         choice = raw_input('Enter your choice: ')
 
@@ -220,11 +235,16 @@ def mainMenu():
         if choice == '1':
             os.system('clear')
             viewFiles()
-        elif choice == '2':
+	elif choice == '2':
+	    os.system('clear')
+	    filename = raw_input('Enter the name of the file you want to encrypt: ')
+	    securekey = raw_input('Enter the key: ')
+	    encrypt_file(filename, securekey)
+        elif choice == '3':
             os.system('clear')
             filename = raw_input('Enter the name of the file you want to decrypt: ')
 	    securekey = raw_input('Enter the key: ')
-            decrypt_file(filename, key)
+            decrypt_file(filename, securekey)
         elif choice == '3':
             os.system('clear')
             logIn()
