@@ -5,7 +5,7 @@
   <div class="panel-heading">
     <h3 class="panel-title">Description</h3>
   </div>
-  <div class="panel-body">
+  <div class="panel-body" id="descr">
     {{report.description}}
   </div>
 </div>
@@ -14,7 +14,7 @@
   <div class="panel-heading">
     <h3 class="panel-title">Full Description</h3>
   </div>
-  <div class="panel-body">
+  <div class="panel-body" id="full descr"> 
     {{report.full_description}}
   </div>
  </div>
@@ -24,7 +24,7 @@
   <div class="panel-heading">
     <h3 class="panel-title">Reporter</h3>
   </div>
-  <div class="panel-body">
+  <div class="panel-body" id="reporter">
     {{report.reporter_it_belongs_to}}
   </div>
 </div>
@@ -36,6 +36,15 @@
   </div>
   <div class="panel-body">
     {{report.created_at}}
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Private</h3>
+  </div>
+  <div class="panel-body" id="is private">
+    {{report.is_private}}
   </div>
 </div>
 
@@ -53,8 +62,10 @@
     {% else %}
         <p>no groups selected.</p>
     {% endif %}
+
   </div>
 </div>
+
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">reporters_that_can_view</h3>
