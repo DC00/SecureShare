@@ -9,9 +9,12 @@ from django.contrib.auth import logout
 from django.contrib.auth import login
 from django.utils import timezone
 
+
+
+
 from .models import Report, Reporter, Message, Group, Membership
 
-from .forms import ReporterForm, MessageForm, ReportForm, ReporterForm2, GroupForm
+from .forms import ReporterForm, MessageForm, ReportForm, ReportForm2, ReporterForm2, GroupForm
 
 # Views let you create objects that can then be used in the template
 def home(request):
@@ -41,17 +44,17 @@ def index(request):
     if request.user.is_authenticated():
         logged_in_reporter = Reporter.objects.get(user_name=request.user)
         for t in Report.objects.all():
-            
-            for r in t.reporters_that_can_view.all():
-                if r.user_name==logged_in_reporter.user_name:
-                    user_report_list.append(t)
+            if t.reporter_it_belongs_to!=logged_in_reporter:                        
+                for r in t.reporters_that_can_view.all():
+                    if r.user_name==logged_in_reporter.user_name:
+                        user_report_list.append(t)
 
-            
-            for s in t.groups_that_can_view.all():
-                for u in s.members.all():
-                    if u.user_name==logged_in_reporter.user_name:
-                        if t not in user_report_list:
-                            user_report_list.append(t)
+                
+                for s in t.groups_that_can_view.all():
+                    for u in s.members.all():
+                        if u.user_name==logged_in_reporter.user_name:
+                            if t not in user_report_list:
+                                user_report_list.append(t)
 
             if t.reporter_it_belongs_to==logged_in_reporter: 
                 user_made_report_list.append(t)           
@@ -105,7 +108,6 @@ def sendmessage(request):
         'title': title,
         'form': form
     }
-    print('we were here')
 
     if form.is_valid():
 
@@ -125,8 +127,15 @@ def sendmessage(request):
         
     return render(request, 'sendmessage.html', context)
 
+
+def handle_uploaded_file(f):
+    with open('some/file/name.txt', 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+
 def createreport(request):
-    form = ReportForm(request.POST or None)
+    form = ReportForm(request.POST, request.FILES)
+    
     title = 'Send New Report'
     context = {
         'title': title,
@@ -134,11 +143,17 @@ def createreport(request):
     }
 
     if form.is_valid():
-
+        print('here')
         # POST has a hash as well. Raw data. Don't do this
         # print(request.POST['email'])
         
-        r_thang = Report.objects.create(description=form.cleaned_data['description'], full_description=form.cleaned_data['full_description'],is_private=form.cleaned_data['is_private'])
+        r_thang = Report.objects.create(description=form.cleaned_data['description'], 
+                                        full_description=form.cleaned_data['full_description'],
+                                        is_private=form.cleaned_data['is_private'],
+                                        uploaded_files=request.FILES['uploaded_files'])
+        # for f in request.FILES:   
+        #     r_thang.uploaded_files.add(f)
+        # print (request.FILES['uploaded_files'])
         for u in form.cleaned_data['Select_Users']:
             r_thang.reporters_that_can_view.add(Reporter.objects.get(pk=u))
         for s in form.cleaned_data['Select_Groups']:
@@ -154,16 +169,36 @@ def createreport(request):
         
     return render(request, 'createreport.html', context)
 
-# def editreport(request, report_id):
-    
-#     my_record = Report.objects.get(id=report_id)
-#     form = ReportForm2(instance=my_record)
-#     title = 'Send New Report'
-#     context = {
-#         'title': title,
-#         'form': form
-#     }
-#     return render(request, 'index.html', context)
+def editreport(request, report_id):
+
+    my_record = Report.objects.get(id=report_id)
+    form = ReportForm2(request.POST, request.FILES, instance=my_record)
+    title = 'Send New Report'
+    context = {
+        'title': title,
+        'form': form
+    }
+    if form.is_valid():
+
+        # POST has a hash as well. Raw data. Don't do this
+        # print(request.POST['email'])
+        print('inside')
+
+        instance = form.save(commit=False)
+
+        print(instance.description)
+        Report.objects.get(id=report_id).description = instance.description
+        instance.save()
+        print(Report.objects.get(id=report_id).description)
+        Report.objects.get(id=report_id).full_description = instance.full_description
+
+        # print(instance.timestamp)
+        context = {
+            'title': "Thank you!",
+        }
+        return redirect('secureshare.views.index')
+    return render(request, 'editreport.html', context)
+
 
 def creategroup(request):
     form = GroupForm(request.POST or None)
@@ -191,6 +226,7 @@ def creategroup(request):
         return redirect('secureshare.views.gindex')
     return render(request, 'creategroup.html', context)
 
+
 def sent(request):
     return render(request, 'sent.html', [])
 
@@ -209,7 +245,8 @@ def detail(request, report_id):
 
 def deletereport(request, report_id):
     Report.objects.get(id=report_id).delete()
-    return render(request, 'reports/index.html', [])
+    return redirect('secureshare.views.index')
+    
 
 
 def detail2(request, message_id):

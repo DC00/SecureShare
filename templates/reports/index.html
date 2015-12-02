@@ -10,8 +10,9 @@
 
 
 
-<p>Below are reports that have been shared with you</p>
+
 {% if user_report_list %}
+<p>Below are reports that have been shared with you</p>
     <ul id="reports">
     {% for r in user_report_list %}
         <li><a href="/reports/{{ r.id }}/">{{ r.description }}</a></li>

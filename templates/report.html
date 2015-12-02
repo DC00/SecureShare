@@ -3,6 +3,24 @@
 {% block content %}
 <div class="panel panel-default">
   <div class="panel-heading">
+    <h3 class="panel-title">Report Author</h3>
+  </div>
+  <div class="panel-body" id="reporter">
+    {{report.reporter_it_belongs_to}}
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Date Created</h3>
+  </div>
+  <div class="panel-body">
+    {{report.created_at}}
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
     <h3 class="panel-title">Description</h3>
   </div>
   <div class="panel-body" id="descr">
@@ -19,29 +37,9 @@
   </div>
  </div>
 
-
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">Reporter</h3>
-  </div>
-  <div class="panel-body" id="reporter">
-    {{report.reporter_it_belongs_to}}
-  </div>
-</div>
-
-
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Created At</h3>
-  </div>
-  <div class="panel-body">
-    {{report.created_at}}
-  </div>
-</div>
-
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Private</h3>
+    <h3 class="panel-title">Private Status</h3>
   </div>
   <div class="panel-body" id="is private">
     {{report.is_private}}
@@ -82,7 +80,10 @@
     {% endif %}
   </div>
 </div>
-{{ report.id }}
+{% if logged_in_reporter == report.reporter_it_belongs_to%}
+<a class="btn btn-lg btn-primary" href="/editreport/{{ report.id }}/" align ="center" role="button">Edit Report&raquo;</a>
+{% endif %}
+
 {% if logged_in_reporter == report.reporter_it_belongs_to%}
 <a class="btn btn-lg btn-primary" href="/deletereport/{{ report.id }}/" align ="center" role="button">Delete Report&raquo;</a>
 {% endif %}

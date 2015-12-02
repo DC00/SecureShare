@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.files.storage import FileSystemStorage
+fs = FileSystemStorage(location='/media/uploads')
+
 
 # TODO: Need to use Reporter instead of SignUp
 class Reporter(models.Model):
@@ -24,7 +27,7 @@ class Report(models.Model):
     description = models.TextField()
     full_description = models.TextField()
     # TODO: make Report hold more than 1 file
-    uploaded_files = models.FileField(default=None, blank=True)
+    uploaded_files = models.FileField(upload_to=fs, default=None)
     groups_that_can_view = models.ManyToManyField(Group, blank=True, null=True, related_name='groups_to')
     reporters_that_can_view = models.ManyToManyField(Reporter, blank=True, null=True, related_name='reporter_to')
     is_private = models.BooleanField(default=False, blank=True)
@@ -40,6 +43,7 @@ class Report(models.Model):
 class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     content = models.TextField(default='defualt Message')
+    is_private = models.BooleanField(default=False, blank=True)
     #group_it_belongs_to = models.ForeignKey(Group, default=None)
     send_to = models.ForeignKey(Reporter, blank=True, null=True, on_delete=models.SET_NULL, related_name='send_to')
     sender = models.ForeignKey(Reporter, blank=True, null=True, on_delete=models.SET_NULL, related_name='sender')
