@@ -29,10 +29,10 @@ class Report(models.Model):
     description = models.TextField()
     full_description = models.TextField()
     # TODO: make Report hold more than 1 file
-    uploaded_files = models.FileField(upload_to=fs, default=None)
+    uploaded_files = models.FileField(upload_to=fs, blank=True, default=None)
     groups_that_can_view = models.ManyToManyField(Group, blank=True, null=True, related_name='groups_to')
     reporters_that_can_view = models.ManyToManyField(Reporter, blank=True, null=True, related_name='reporter_to')
-    is_private = models.BooleanField(default=False, blank=True)
+    is_private = models.BooleanField(blank=True, default=False)
     # Foreign key for relationship to a Reporter. Many Reports to One Reporter
     reporter_it_belongs_to = models.ForeignKey(Reporter, blank=True, null=True, on_delete=models.SET_NULL, related_name='belongs_to')
     

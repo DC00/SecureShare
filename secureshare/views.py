@@ -49,18 +49,22 @@ def index(request):
     if request.user.is_authenticated():
         logged_in_reporter = Reporter.objects.get(user_name=request.user)
         for t in Report.objects.all():
-            if t.reporter_it_belongs_to!=logged_in_reporter:                        
-                for r in t.reporters_that_can_view.all():
-                    if r.user_name==logged_in_reporter.user_name:
-                        user_report_list.append(t)
+            #if code breaks, take out this if series 
+            if t.is_private == True:
+                pass
+                if t.reporter_it_belongs_to!=logged_in_reporter:                        
+                    for r in t.reporters_that_can_view.all():
+                        if r.user_name==logged_in_reporter.user_name:
+                            user_report_list.append(t)
 
-                
-                for s in t.groups_that_can_view.all():
-                    for u in s.members.all():
-                        if u.user_name==logged_in_reporter.user_name:
-                            if t not in user_report_list:
-                                user_report_list.append(t)
-
+                    
+                    for s in t.groups_that_can_view.all():
+                        for u in s.members.all():
+                            if u.user_name==logged_in_reporter.user_name:
+                                if t not in user_report_list:
+                                    user_report_list.append(t)
+            else: 
+                user_report_list.append(t)
             if t.reporter_it_belongs_to==logged_in_reporter: 
                 user_made_report_list.append(t) 
         for f in Folder.objects.all():
@@ -158,11 +162,15 @@ def createreport(request):
         print('here')
         # POST has a hash as well. Raw data. Don't do this
         # print(request.POST['email'])
-        
-        r_thang = Report.objects.create(description=form.cleaned_data['description'], 
-                                        full_description=form.cleaned_data['full_description'],
-                                        is_private=form.cleaned_data['is_private'],
-                                        uploaded_files=request.FILES['uploaded_files'])
+        if(request.FILES):
+            r_thang = Report.objects.create(description=form.cleaned_data['description'], 
+                                            full_description=form.cleaned_data['full_description'],
+                                            is_private=form.cleaned_data['is_private'],
+                                            uploaded_files=request.FILES['uploaded_files'])
+        else:
+            r_thang = Report.objects.create(description=form.cleaned_data['description'], 
+                                            full_description=form.cleaned_data['full_description'],
+                                            is_private=form.cleaned_data['is_private'])
         # for f in request.FILES:   
         #     r_thang.uploaded_files.add(f)
         # print (request.FILES['uploaded_files'])

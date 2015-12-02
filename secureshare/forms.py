@@ -22,8 +22,8 @@ class MessageForm(forms.ModelForm):
 class ReportForm(forms.Form):
     description = forms.CharField(label='description:')
     full_description = forms.CharField(label='full_description:')
-    is_private = forms.BooleanField(label='make_private:')
-    uploaded_files = forms.FileField(label='Attached Files:')
+    is_private = forms.BooleanField(label='make_private:', required=False)
+    uploaded_files = forms.FileField(label='Attached Files:', required=False)
     Reporter_choices = [[x.id, x.user_name] for x in Reporter.objects.all()]
     Select_Users= forms.MultipleChoiceField(label='Select Users', choices=Reporter_choices, widget=forms.CheckboxSelectMultiple(), required=False)
     Group_choices = [[y.id, y.name] for y in Group.objects.all()]
