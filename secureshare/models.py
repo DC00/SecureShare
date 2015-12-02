@@ -5,6 +5,7 @@ fs = FileSystemStorage(location='/media/uploads')
 
 
 # TODO: Need to use Reporter instead of SignUp
+
 class Reporter(models.Model):
     user_name = models.CharField(max_length=120, null=True)
     password = models.CharField(max_length=120, null=True)
@@ -20,6 +21,7 @@ class Group(models.Model):
 
     def __str__(self):
       return self.name
+
 
 class Report(models.Model):
     # See https://docs.djangoproject.com/en/1.8/ref/models/fields/ for explanations of model fields
@@ -37,8 +39,14 @@ class Report(models.Model):
     def __str__(self):
        return self.description
 
-# Many Groups to Many Reporters
-
+class Folder(models.Model):
+    name = models.CharField(max_length=120)
+    contents = models.ManyToManyField(Report, blank=True, null=True)
+    owner = models.ForeignKey(Reporter, blank=True, null=True, on_delete=models.SET_NULL)
+    def __str__(self):
+       return self.name
+ 
+# Many Groups to Many Reporters   
 
 class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True)

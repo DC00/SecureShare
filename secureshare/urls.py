@@ -32,6 +32,8 @@ urlpatterns = [
     
     url(r'^createreport/', views.createreport, name='createreport'),
 
+    url(r'^createfolder/', views.createfolder, name='createfolder'),
+
 
 
 
@@ -54,7 +56,12 @@ urlpatterns = [
     url(r'^reports/(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
     url(r'^message/(?P<message_id>[0-9]+)/$', views.detail2, name='detail2'),
     url(r'^group/(?P<group_id>[0-9]+)/$', views.detail3, name='detail3'),
+    url(r'^folder/(?P<folder_id>[0-9]+)/$', views.detail4, name='detail4'),
 
     url(r'^deletereport/(?P<report_id>[0-9]+)/$', views.deletereport, name='deletereport'),
     url(r'^editreport/(?P<report_id>[0-9]+)/$', views.editreport, name='editreport'),
+
+    url(r'^editfolder/(?P<folder_id>[0-9]+)/$', views.editfolder, name='editfolder'),
+    url(r'^deletefolder/(?P<folder_id>[0-9]+)/$', views.deletefolder, name='deletefolder'),
+
 ]

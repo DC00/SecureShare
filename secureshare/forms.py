@@ -1,5 +1,5 @@
 from django import forms
-from .models import Reporter, Message, Report, Group
+from .models import Reporter, Message, Report, Group, Folder
 
 class ReporterForm(forms.ModelForm):
     class Meta:
@@ -39,6 +39,17 @@ class GroupForm(forms.Form):
     name = forms.CharField(label='Group Name:')
     Reporter_choices = [[x.id, x.user_name] for x in Reporter.objects.all()]
     Select_Users= forms.MultipleChoiceField(choices=Reporter_choices, widget=forms.CheckboxSelectMultiple(), required=False)
+
+class FolderForm(forms.Form):
+    name = forms.CharField(label='Folder Name:')
+    Report_choices = [[x.id, x.description] for x in Report.objects.all()]
+    Select_Reports= forms.MultipleChoiceField(choices=Report_choices, widget=forms.CheckboxSelectMultiple(), required=False)
+
+class FolderForm2(forms.ModelForm):
+    class Meta:
+        model = Folder
+        # formats the message form. Corresponds to the SignUp model
+        fields = ['name']
 
 
     # description = forms.CharField(label='Group Name:')

@@ -4,6 +4,7 @@
 
 {% block content %}
 <a class="btn btn-lg btn-primary" href="/createreport/" align ="center" role="button">Make New Report&raquo;</a>
+<a class="btn btn-lg btn-primary" href="/createfolder/" align ="center" role="button">Make New Folder&raquo;</a>
 <br>
 <br>
 
@@ -23,6 +24,16 @@
 {% endif %}
 
 
+{% if user_made_folder_list %}
+<p>Folders you have made</p>
+    <ul>
+    {% for f in user_made_folder_list %}
+        <li><a href="/folder/{{ f.id }}/">{{ f.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Folder Have Been Made Yet.</p>
+{% endif %}
 
 
 
