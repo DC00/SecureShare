@@ -23,6 +23,9 @@ urlpatterns = [
     url(r'^groups/', views.gindex, name='groups'),
 
 
+    url(r'^media/(?P<filename>.*)/$', views.view_file, name='detail'),
+
+
 
 
     

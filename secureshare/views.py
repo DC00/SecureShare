@@ -437,4 +437,11 @@ def logout_view(request):
     logout(request)
     return render(request, 'home.html', [])
 
+def view_file(request, filename):
+    with open('media/%s' % (filename), 'r') as f:
+        file_text = f.read().rstrip()
+        
+    context = {'file_text' : file_text}
+    return render(request, 'view_file.html', context)
+
   
