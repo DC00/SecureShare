@@ -29,7 +29,7 @@ class Report(models.Model):
     description = models.TextField()
     full_description = models.TextField()
     # TODO: make Report hold more than 1 file
-    uploaded_files = models.FileField(upload_to=fs, default=None)
+    uploaded_files = models.FileField(upload_to='', default=None)
     groups_that_can_view = models.ManyToManyField(Group, blank=True, null=True, related_name='groups_to')
     reporters_that_can_view = models.ManyToManyField(Reporter, blank=True, null=True, related_name='reporter_to')
     is_private = models.BooleanField(default=False, blank=True)
@@ -38,6 +38,7 @@ class Report(models.Model):
     
     def __str__(self):
        return self.description
+
 
 class Folder(models.Model):
     name = models.CharField(max_length=120)
