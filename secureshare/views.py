@@ -9,6 +9,8 @@ from django.contrib.auth import logout
 from django.contrib.auth import login
 from django.utils import timezone
 
+import base64
+
 
 from .encryption import encrypt, decrypt
 
@@ -135,9 +137,9 @@ def sendmessage(request):
         instance = form.save(commit=False)
         instance.sender = Reporter.objects.get(user_name=request.user)
         if instance.is_private == True:
-            print("sender password: %s " % (instance.send_to.password))
-            print("sending content: %s" % (instance.content))
-            instance.content = encrypt(instance.content, instance.send_to.password)
+            #print("sender password: %s " % (instance.send_to.password))
+            #print("sending content: %s" % (instance.content))
+            instance.content = base64.b64encode(encrypt(instance.content, instance.send_to.password))
 
 
         # commit=True
@@ -152,9 +154,9 @@ def sendmessage(request):
 def decryptmessage(request, message_id):
     message = Message.objects.get(id=message_id)
     r_guy = Reporter.objects.get(user_name=request.user)
-    print("getter password: %s" % (r_guy.password))
-    print("message context, getter: %s" % (message.content))
-    message.content = decrypt(message.content, r_guy.password)
+    #print("getter password: %s" % (r_guy.password))
+    #print("message context, getter: %s" % (message.content))
+    message.content = decrypt(base64.b64decode(message.content), r_guy.password)
     message.is_private = False
     message.save()
     context = {
