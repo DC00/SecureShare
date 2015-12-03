@@ -6,6 +6,8 @@
 from Crypto.PublicKey import RSA
 from Crypto import Random
 from Crypto.Cipher import ARC4
+import binascii
+
 
 import os.path
 import os
@@ -20,40 +22,57 @@ iv = b'12345678'
 
 
 def encrypt(text, key):
-	# key = '12345678'
+    print("encrypted receives: %s" %(text))
     cipher = ARC4.new(key)
-    encrypted_text = cipher.encrypt(text)
-    ascii_list = []
-    for c in encrypted_text:
-    	ascii_list.append(ord(c))
-    return ascii_list
+    encrypted_text = cipher.encrypt(text.encode('utf-8'))
+    print("encrypt sends: %s" %(encrypted_text))
+    return encrypted_text
 
 
-# def decrypt(text, key)
-#     key_size8 = key[0:8]
-#     cipher = DES.new(key_size8, DES.MODE_CFB, iv)
-#     return cipher.decrypt(text)
+def decrypt(text, key):
+    print("decrypt receives: %s" %(text))
+    cipher = ARC4.new(key)
+    decrypted_text = cipher.decrypt(text)
+    print("decrypted text: %s" %(decrypted_text))
+    return decrypted_text.decode("utf-8")
 
 
-def decrypt(values, key):
-	# key = '12345678'
-	ascii_values = ""
-	for i in values[1:len(values)-1]:
-		if i == ',':
-			continue
-		ascii_values += str(unichr(int(i)))
-	cipher = ARC4.new(key)
-	decrypted_text = cipher.decrypt(ascii_values)
-	return decrypted_text
+
+
+# text to unicode
+# unicode to ascii
+# send the ascii
+# convert ascii back to unicode
+# decrypt the unicode
+# unicode to python string
+
+
+# unicode to ascii: u.encode('utf8')
+# unicode to ascii: maybe u.encode('utf-8')
+# unicode to ascii: u.encode('ascii', 'ignore')
+
+# byte string to python string  b'string'.deocde("utf-8")
+
+
+
+
+def text_to_bits(text, encoding='utf-8', errors='surrogatepass'):
+    bits = bin(int(binascii.hexlify(text.encode(encoding, errors)), 16))[2:]
+    return bits.zfill(8 * ((len(bits) + 7) // 8))
+
+def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):
+    n = int(bits, 2)
+    return int2bytes(n).decode(encoding, errors)
+
+def int2bytes(i):
+    hex_string = '%x' % i
+    n = len(hex_string)
+    return binascii.unhexlify(hex_string.zfill(n + (n & 1)))
 
 
 
 if __name__ == "__main__":
-    # random_generator = Random.new().read
-    # key = RSA.generate(1024, random_generator)
-    # public_key = key.publickey()
-    # secret_string('abcdefghijklmplkjdfklsjfklj', public_key)
-
-    test = encrypt("test", '12345678')
+    test = encrypt("test message. pls work", '12345678')
     final = decrypt(test, '12345678')
-    print final
+
+

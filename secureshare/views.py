@@ -135,7 +135,8 @@ def sendmessage(request):
         instance = form.save(commit=False)
         instance.sender = Reporter.objects.get(user_name=request.user)
         if instance.is_private == True:
-            print(instance.send_to.password)
+            print("sender password: %s " % (instance.send_to.password))
+            print("sending content: %s" % (instance.content))
             instance.content = encrypt(instance.content, instance.send_to.password)
 
 
@@ -151,8 +152,9 @@ def sendmessage(request):
 def decryptmessage(request, message_id):
     message = Message.objects.get(id=message_id)
     r_guy = Reporter.objects.get(user_name=request.user)
-    print(r_guy.password)
-    message.content = decrypt(message.content, r_guy.password.strip())
+    print("getter password: %s" % (r_guy.password))
+    print("message context, getter: %s" % (message.content))
+    message.content = decrypt(message.content, r_guy.password)
     message.is_private = False
     message.save()
     context = {
@@ -469,5 +471,41 @@ def view_file(request, filename):
         
     context = {'file_text' : file_text}
     return render(request, 'view_file.html', context)
+
+
+def search_index(request):
+    reports = Report.objects.all()
+    context = {'reports' : reports}
+    return render(request, 'search_index.html', context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   
