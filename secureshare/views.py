@@ -10,7 +10,7 @@ from django.contrib.auth import login
 from django.utils import timezone
 
 
-
+from .encryption import encrypt, decrypt
 
 from .models import Report, Reporter, Message, Group, Membership, Folder
 
@@ -118,6 +118,7 @@ def gindex(request):
 ######################################################################
 #BELOW IS RESPONSIBLE FOR ALL THE MESSAGE FUNCTIONALITY
 ######################################################################
+
 def sendmessage(request):
     form = MessageForm(request.POST or None)
     title = 'SEND NEW Message'
@@ -133,9 +134,13 @@ def sendmessage(request):
 
         instance = form.save(commit=False)
         instance.sender = Reporter.objects.get(user_name=request.user)
+        if instance.is_private == True:
+            print(instance.send_to.password)
+            instance.content = encrypt(instance.content, instance.send_to.password)
+
+
         # commit=True
         instance.save()
-        print('we were here')
         # print(instance.timestamp)
         context = {
             'title': "Thank you!",
@@ -143,6 +148,19 @@ def sendmessage(request):
         return redirect('secureshare.views.sent')
         
     return render(request, 'sendmessage.html', context)
+def decryptmessage(request, message_id):
+    message = Message.objects.get(id=message_id)
+    r_guy = Reporter.objects.get(user_name=request.user)
+    print(r_guy.password)
+    message.content = decrypt(message.content, r_guy.password.strip())
+    message.is_private = False
+    message.save()
+    context = {
+        'Message' : message
+    }
+
+    return render(request, 'message.html', context)
+
 
 
 

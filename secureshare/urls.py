@@ -61,6 +61,8 @@ urlpatterns = [
     url(r'^group/(?P<group_id>[0-9]+)/$', views.detail3, name='detail3'),
     url(r'^folder/(?P<folder_id>[0-9]+)/$', views.detail4, name='detail4'),
 
+    url(r'^decryptmessage/(?P<message_id>[0-9]+)/$', views.decryptmessage, name='decryptmessage'),
+
     url(r'^deletereport/(?P<report_id>[0-9]+)/$', views.deletereport, name='deletereport'),
     url(r'^editreport/(?P<report_id>[0-9]+)/$', views.editreport, name='editreport'),
 

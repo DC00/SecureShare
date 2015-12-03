@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
+
 {% block content %}
+
+{% if Message.is_private == True %}
+<p>Message contents are currently encrypted!!!</p>
+<a class="btn btn-lg btn-primary" href="/decryptmessage/{{ Message.id }}/" align ="center" role="button">Decrypt Message&raquo;</a>
+{% else %}
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Message from:</h3>
@@ -27,5 +33,5 @@
     {{Message.content}}
   </div>
 </div>
-
+{% endif %}
 {% endblock %}
