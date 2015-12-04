@@ -20,7 +20,9 @@ urlpatterns = [
     
     url(r'^message/$', views.windex, name='message'),
     
-    url(r'^groups/', views.gindex, name='groups'),
+    url(r'^groups/$', views.gindex, name='groups'),
+
+    url(r'^reporter/$', views.rindex, name='reporters'),
 
 
     url(r'^media/(?P<filename>.*)/$', views.view_file, name='detail'),
@@ -57,16 +59,34 @@ urlpatterns = [
 
     # url(r'^reports/(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
     url(r'^reports/(?P<report_id>[0-9]+)/$', views.detail, name='detail'),
-    url(r'^message/(?P<message_id>[0-9]+)/$', views.detail2, name='detail2'),
-    url(r'^group/(?P<group_id>[0-9]+)/$', views.detail3, name='detail3'),
-    url(r'^folder/(?P<folder_id>[0-9]+)/$', views.detail4, name='detail4'),
-
-    url(r'^decryptmessage/(?P<message_id>[0-9]+)/$', views.decryptmessage, name='decryptmessage'),
-
     url(r'^deletereport/(?P<report_id>[0-9]+)/$', views.deletereport, name='deletereport'),
     url(r'^editreport/(?P<report_id>[0-9]+)/$', views.editreport, name='editreport'),
 
+
+    url(r'^message/(?P<message_id>[0-9]+)/$', views.detail2, name='detail2'),
+    url(r'^decryptmessage/(?P<message_id>[0-9]+)/$', views.decryptmessage, name='decryptmessage'),
+    url(r'^deletemessage/(?P<message_id>[0-9]+)/$', views.deletemessage, name='deletemessage'),
+
+
+    url(r'^group/(?P<group_id>[0-9]+)/$', views.detail3, name='detail3'),
+    url(r'^editgroup/(?P<group_id>[0-9]+)/$', views.editgroup, name='editgroup'),
+
+
+    url(r'^folder/(?P<folder_id>[0-9]+)/$', views.detail4, name='detail4'),
     url(r'^editfolder/(?P<folder_id>[0-9]+)/$', views.editfolder, name='editfolder'),
     url(r'^deletefolder/(?P<folder_id>[0-9]+)/$', views.deletefolder, name='deletefolder'),
+
+
+    url(r'^reporter/(?P<reporter_id>[0-9]+)/$', views.detail5, name='detail5'),
+	url(r'^makesuper/(?P<reporter_id>[0-9]+)/$', views.makesuper, name='makesuper'),
+    url(r'^suspend/(?P<reporter_id>[0-9]+)/$', views.suspend, name='suspend'),
+    url(r'^un_suspend/(?P<reporter_id>[0-9]+)/$', views.un_suspend, name='un_suspend'),
+
+
+
+
+    
+
+    
 
 ]

@@ -11,6 +11,7 @@ class Reporter(models.Model):
     password = models.CharField(max_length=120, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     email = models.EmailField()
+    is_superuser = models.BooleanField(blank=True, default=False)
     user = models.OneToOneField(User, blank=True, null=True)
 
     def __str__(self):

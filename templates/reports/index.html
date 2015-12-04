@@ -13,7 +13,7 @@
 
 
 {% if user_report_list %}
-<p>Below are reports that have been shared with you</p>
+<p>Reports Viewable to You</p>
     <ul id="reports">
     {% for r in user_report_list %}
         <li><a href="/reports/{{ r.id }}/">{{ r.description }}</a></li>
@@ -25,14 +25,20 @@
 
 
 {% if user_made_folder_list %}
-<p>Folders you have made</p>
+<p>You Folders</p>
     <ul>
     {% for f in user_made_folder_list %}
         <li><a href="/folder/{{ f.id }}/">{{ f.name }}</a></li>
     {% endfor %}
+    <br>
+<br>
     </ul>
 {% else %}
-    <p>No Folder Have Been Made Yet.</p>
+    <p>No Folders Have Been Made Yet.</p>
+    <br>
+    <br>
+    <br>
+    <br>
 {% endif %}
 
 
@@ -46,6 +52,10 @@
     </ul>
 {% else %}
     <p>You have not made any reports.</p>
+    <br>
+    <br>
+    <br>
+    <br>
 {% endif %}
 
 

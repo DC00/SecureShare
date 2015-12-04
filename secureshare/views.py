@@ -10,11 +10,11 @@ from django.contrib.auth import login
 from django.utils import timezone
 
 
-from .encryption import encrypt, decrypt
+#from .encryption import encrypt, decrypt
 
 from .models import Report, Reporter, Message, Group, Membership, Folder
 
-from .forms import ReporterForm, MessageForm, ReportForm, ReportForm2, ReporterForm2, GroupForm, FolderForm, FolderForm2
+from .forms import ReporterForm, MessageForm, ReportForm, ReportForm2, ReporterForm2, GroupForm, GroupForm2, FolderForm, FolderForm2
 
 # Views let you create objects that can then be used in the template
 ######################################################################
@@ -23,9 +23,14 @@ from .forms import ReporterForm, MessageForm, ReportForm, ReportForm2, ReporterF
 def home(request):
     title = "Welcome to SecureWitness"
     flag = False
+    is_super = False
+
     if request.user.is_authenticated():
         flag = True
         title = "SecureWitness, Welcome %s" % (request.user)
+        logged_in_reporter = Reporter.objects.get(user_name=request.user)
+        if logged_in_reporter.is_superuser:
+            is_super = True
 
     #Evetything in this dictionary can be used in templates/home.html
     #Add forms to context to use them in the view
@@ -36,7 +41,8 @@ def home(request):
 
     context = {
         'title': title,
-        'flag': flag
+        'flag': flag,
+        'is_super': is_super
     }
     return render(request, "home.html", context)
 ######################################################################
@@ -45,28 +51,33 @@ def index(request):
     # Want to display only the reports of the user that's logged in
     user_report_list = []
     user_made_report_list =[]
-    user_made_folder_list =[]    
+    user_made_folder_list =[]
+
     if request.user.is_authenticated():
         logged_in_reporter = Reporter.objects.get(user_name=request.user)
-        for t in Report.objects.all():
-            #if code breaks, take out this if series 
-            if t.is_private == True:
-                pass
-                if t.reporter_it_belongs_to!=logged_in_reporter:                        
-                    for r in t.reporters_that_can_view.all():
-                        if r.user_name==logged_in_reporter.user_name:
-                            user_report_list.append(t)
 
-                    
-                    for s in t.groups_that_can_view.all():
-                        for u in s.members.all():
-                            if u.user_name==logged_in_reporter.user_name:
-                                if t not in user_report_list:
-                                    user_report_list.append(t)
-            else: 
-                user_report_list.append(t)
-            if t.reporter_it_belongs_to==logged_in_reporter: 
-                user_made_report_list.append(t) 
+        if logged_in_reporter.is_superuser:
+            user_report_list = Report.objects.all()
+        else:
+            for t in Report.objects.all():
+                #if code breaks, take out this if series 
+                if t.is_private == True:
+                    pass
+                    if t.reporter_it_belongs_to!=logged_in_reporter:                        
+                        for r in t.reporters_that_can_view.all():
+                            if r.user_name==logged_in_reporter.user_name:
+                                user_report_list.append(t)
+
+                        
+                        for s in t.groups_that_can_view.all():
+                            for u in s.members.all():
+                                if u.user_name==logged_in_reporter.user_name:
+                                    if t not in user_report_list:
+                                        user_report_list.append(t)
+                else: 
+                    user_report_list.append(t)
+                if t.reporter_it_belongs_to==logged_in_reporter: 
+                    user_made_report_list.append(t) 
         for f in Folder.objects.all():
             print(f.owner)
             if f.owner == logged_in_reporter:
@@ -88,33 +99,63 @@ def index(request):
 def windex(request):
     title = 'Welcome to Messages'
 
-    latest_message_list = []
+    
     if request.user.is_authenticated():
+        latest_message_list = []
         logged_in_reporter = Reporter.objects.get(user_name=request.user)
         latest_message_list = Message.objects.all().filter(send_to=logged_in_reporter)
         #latest_message_list.sort(key=lambda x: x.created_at.lower())
-    context = {
-        'title': title,
-        'latest_message_list' : latest_message_list,
-    }
-
+        context = {
+            'title': title,
+            'latest_message_list' : latest_message_list,
+        }
+    else:
+        title = "please log in to see your messages"
+        context = {
+            'title': title,
+        }
     return render(request, 'message/index2.html', context)
 
 def gindex(request):
     
-    latest_group_list = Group.objects.order_by('name')
-    title = 'hey you made it to groups!'
+    if request.user.is_authenticated():
+        logged_in_reporter = Reporter.objects.get(user_name=request.user)
+        latest_group_list = []
+
+        if logged_in_reporter.is_superuser:
+            latest_group_list = Group.objects.all()
+        else:
+            for g in Group.objects.all():
+                for r in g.memebrs.all():
+                    if r == logged_in_reporter:
+                        latest_group_list.append(g)
+
+        title = 'Welcome to groups page'
+        context = {
+            'title': title,
+            'latest_group_list' : latest_group_list,
+        }
+    else: 
+        title = "please log in to see your messages"
+        context = {
+            'title': title,
+        }
+    return render(request, 'gindex.html', context)
+def rindex(request):
+    
+    latest_reporter_list = Reporter.objects.order_by('user_name')
+
+    title = 'here are all reporters!'
     context = {
         'title': title,
-        'latest_group_list' : latest_group_list,
+        'latest_reporter_list' : latest_reporter_list,
     }
-
 
         # Loads the template at reports/index.html and passes it a context
     # the context is a dictionary mapping template variable names to Python objects
     # e.g. maps 'latest_report_list' -> latest_report_list
     
-    return render(request, 'gindex.html', context)
+    return render(request, 'rindex.html', context)
 ######################################################################
 #BELOW IS RESPONSIBLE FOR ALL THE MESSAGE FUNCTIONALITY
 ######################################################################
@@ -135,8 +176,8 @@ def sendmessage(request):
         instance = form.save(commit=False)
         instance.sender = Reporter.objects.get(user_name=request.user)
         if instance.is_private == True:
-            print(instance.send_to.password)
-            instance.content = encrypt(instance.content, instance.send_to.password)
+            print('encrypted')
+            #instance.content = encrypt(instance.content, instance.send_to.password)
 
 
         # commit=True
@@ -151,8 +192,8 @@ def sendmessage(request):
 def decryptmessage(request, message_id):
     message = Message.objects.get(id=message_id)
     r_guy = Reporter.objects.get(user_name=request.user)
-    print(r_guy.password)
-    message.content = decrypt(message.content, r_guy.password.strip())
+    print('decrypt')
+    #message.content = decrypt(message.content, r_guy.password.strip())
     message.is_private = False
     message.save()
     context = {
@@ -161,7 +202,9 @@ def decryptmessage(request, message_id):
 
     return render(request, 'message.html', context)
 
-
+def deletemessage(request, message_id):
+    Message.objects.get(id=message_id).delete()
+    return redirect('secureshare.views.windex')
 
 
 ######################################################################
@@ -177,7 +220,6 @@ def createreport(request):
     }
 
     if form.is_valid():
-        print('here')
         # POST has a hash as well. Raw data. Don't do this
         # print(request.POST['email'])
         if(request.FILES):
@@ -269,6 +311,33 @@ def creategroup(request):
         }
         return redirect('secureshare.views.gindex')
     return render(request, 'creategroup.html', context)
+def editgroup(request, group_id):
+    group = Group.objects.get(pk=group_id)
+    form = GroupForm2(request.POST or None)
+    title = 'Add Group Members'
+    context = {
+        'title': title,
+        'form': form
+    }
+    if form.is_valid():
+        for u in form.cleaned_data['Select_Users']:
+            if u not in group.members.all():
+                #todo test adding memebrs 
+                m_thang = Membership.objects.create(reporter=Reporter.objects.get(pk=u), group=group)
+                m_thang.save()
+            # POST has a hash as well. Raw data. Don't do this
+        # print(request.POST['email'])
+        
+
+        
+
+        # print(instance.timestamp)
+        context = {
+            'title': "Thank you!",
+        }
+        return redirect('secureshare.views.gindex')
+    return render(request, 'editgroup.html', context)
+
 ######################################################################
 #SERIOUSLY
 ######################################################################
@@ -357,7 +426,6 @@ def detail2(request, message_id):
 
 def detail4(request, folder_id):
     folder = Folder.objects.get(id=folder_id)
-    print(folder.name)
     context = {
         'Folder' : folder
     }
@@ -365,7 +433,26 @@ def detail4(request, folder_id):
     return render(request, 'folder.html', context)
 
 def detail3(request, group_id):
-    return render(request, 'gindex.html', context)
+    group = Group.objects.get(id=group_id)
+    reporters = group.members.all()
+    print(reporters)
+    context = {
+        'Group' : group,
+        'Reporters' : reporters
+    }
+    return render(request, 'group.html', context)
+
+def detail5(request, reporter_id):
+    reporter = Reporter.objects.get(id=reporter_id)
+    logged_in_reporter = Reporter.objects.get(user_name=request.user)
+
+    flag = logged_in_reporter.is_superuser
+    context = {
+        'flag' : flag,
+        'reporter' : reporter,
+        'logged_in_reporter' : logged_in_reporter
+    }
+    return render(request, 'reporter.html', context)
 ######################################################################
 #USER PROFILE STUFF
 ######################################################################
@@ -389,6 +476,8 @@ def signup(request):
         user = User.objects.create_user(instance.user_name, instance.email, instance.password)
         instance.user = user
         # commit=True
+        if not Reporter.objects.all():
+            instance.is_superuser = True
         instance.save()
         print(instance.email)
 
@@ -423,22 +512,59 @@ def signin(request):
                 login(request, user)
                 return redirect('secureshare.views.index')
             else:
-                print("The password is valid, but the account has been disabled!")
+                title = "The password is valid, but the account has been disabled!"
+                context = {
+                    'title': title,
+                    }
+        
         else:
         # the authentication system was unable to verify the username and password
-            print("The username and password were incorrect.")
-            return redirect('secureshare.views.signin')
-        
+            title = "The username and password were incorrect."
+            context = {
+                'title': title,
+                }
+            
+            
 
-        context = {
-            'title': "Thank you!",
-        }
+        
     
     return render(request, 'signin.html', context)
 
     def logout_view(request):
         logout(request)
         return render(request, 'home.html', [])
+
+
+def makesuper(request, reporter_id):
+    reporter = Reporter.objects.get(id=reporter_id)
+    reporter.is_superuser = True
+    reporter.save()
+    context = {
+        'reporter' : reporter,
+    }
+
+    return redirect('secureshare.views.rindex')
+def suspend(request, reporter_id):
+    reporter = Reporter.objects.get(id=reporter_id)
+    reporter.user.is_active = False
+    print(reporter.user.is_active)
+    reporter.user.save()
+    reporter.save()
+    context = {
+        'reporter' : reporter,
+    }
+
+    return redirect('secureshare.views.rindex')
+def un_suspend(request, reporter_id):
+    reporter = Reporter.objects.get(id=reporter_id)
+    reporter.user.is_active = True
+    reporter.user.save()
+    reporter.save()
+    context = {
+        'reporter' : reporter,
+    }
+
+    return redirect('secureshare.views.rindex')
 ######################################################################
 #THAT KID DAVID'S STUFF
 ######################################################################
