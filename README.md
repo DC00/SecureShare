@@ -25,6 +25,9 @@ When you run ```pip freeze``` these things should be installed
 **Requests >= 2.8** http://docs.python-requests.org/en/latest/ <br>
 ```$ pip install requests```
 
+**Whoosh >= 2.5.6** https://pythonhosted.org/Whoosh/ <br>
+```$ pip install Whoosh```
+
 
 
 
