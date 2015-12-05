@@ -21,6 +21,10 @@ from .models import Report, Reporter, Message, Group, Membership, Folder
 
 from .forms import ReporterForm, MessageForm, ReportForm, ReportForm2, ReporterForm2, GroupForm, GroupForm2, FolderForm, FolderForm2
 
+import os
+BASE_DIR = os.getcwd()
+MEDIA_DIR = "%s/media/" % (BASE_DIR)
+
 # Views let you create objects that can then be used in the template
 ######################################################################
 #BELOW IS THE HOME PAGE, LETS YOU SIGN UP OR LOG IN
@@ -575,7 +579,7 @@ def un_suspend(request, reporter_id):
 
     return redirect('secureshare.views.rindex')
 ######################################################################
-#THAT KID DAVID'S STUFF
+#THAT KID DANIEL'S STUFF
 ######################################################################
 def download_report(request, report_id):
     report = Report.objects.get(id=report_id)
@@ -592,6 +596,18 @@ def make_downloadable_report(report, report_id):
     fw.write("Description: %s \n" % (report.description)) 
     fw.write("Full Description: %s \n" % (report.full_description)) 
     fw.write("Reporter: %s \n" % (report.reporter_it_belongs_to)) 
+
+    filename = "%s" % (report.uploaded_files)
+    path_to_file = "%s%s" % (MEDIA_DIR, filename[2:len(filename)])
+    if not os.path.isfile(path_to_file):
+        raise Exception, "file " + path_to_file + " not found."
+
+    with open(path_to_file, 'rb') as f:
+        text = f.read()
+    f.closed
+
+    fw.write("File: %s" % (text))
+
     fw.close()
 
 def logout_view(request):
