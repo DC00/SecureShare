@@ -10,6 +10,9 @@ from django.contrib.auth import login
 from django.utils import timezone
 
 import base64
+from encryption import encrypt, decrypt
+
+from .search import make_search_index, ranksearch
 
 
 #from .encryption import encrypt, decrypt
@@ -603,12 +606,36 @@ def view_file(request, filename):
     return render(request, 'view_file.html', context)
 
 
-def search_index(request):
-    reports = Report.objects.all()
-    context = {'reports' : reports}
-    return render(request, 'search_index.html', context)
+# def search(request):
+    # if request.GET:
+    #     search_term = request.GET['q']
+    #     results = Report.objects.filter(full_description__contains=search_term)
+    #     return render_to_response('search.html', {'results': results})
+    # return render_to_response('search.html', {})
 
 
+def search(request):
+    if request.GET:
+        make_search_index()
+        query = request.GET['q']
+        results = ranksearch('bm25', query)
+        context = {
+            'results' : results,
+            'query' : query,
+        }
+        return render(request, 'search.html', context)
+    return render(request, 'search.html', {})
+
+
+    # search_term = request.GET.get('query')
+    # reports = Report.objects.all()
+    # results = ["haha", "this", "should", "work"]
+    # context = { 'reports' : reports,
+    #             'query' : q,
+    #             'term' : search_term,
+    #             'results' : results
+    #           }
+    # return render(request, 'search.html', context)
 
 
 

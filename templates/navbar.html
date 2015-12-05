@@ -16,6 +16,7 @@
             <li><a href="{% url 'message' %}">Private Messages</a></li>
             <li><a href="{% url 'groups' %}">Groups</a></li>
             <li><a href="{% url 'reporters' %}">Reporters</a></li>
+            <li><a href="{% url 'search' %}">Search</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% if request.user.is_authenticated %}

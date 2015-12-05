@@ -83,6 +83,8 @@ urlpatterns = [
     url(r'^un_suspend/(?P<reporter_id>[0-9]+)/$', views.un_suspend, name='un_suspend'),
 
 
+    # Search stuff
+    url(r'^search/$', views.search, name='search'),
 
 
     

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Search Reports</h3>
+<form>
+     <input type="text" name='q' placeholder="Search" required>
+     <input type="submit" value="Search">
+</form>
+<br>
+<h6 class='lead'>Query: "{{query}}"</h6>
+{% if results %}
+<div class="row">
+	<div class='col-md-4'>
+		<ul class="list-group">
+			{% for r in results %}
+			    <li><a href="/reports/{{ r.id }}/">{{ r.description }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+{% else %}
+<h6 class='lead'>No Results</h6>
+{% endif %}
+
+
+{% endblock %}
