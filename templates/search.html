@@ -10,15 +10,23 @@
 <br>
 <h6 class='lead'>Query: "{{query}}"</h6>
 {% if results %}
-<div class="row">
-	<div class='col-md-4'>
-		<ul class="list-group">
-			{% for r in results %}
-			    <li><a href="/reports/{{ r.id }}/">{{ r.description }}</a></li>
-			{% endfor %}
-		</ul>
-	</div>
+
+{% for r, score in results %}
+
+<a href="/reports/{{ r.id }}" style="text-decoration:none;color:black;">
+<div class="panel panel-default">
+  <div class="panel-body">
+    Description: {{ r.description }}<br>
+    Full Description: {{ r.full_description }}<br>
+    File Text:<br>
+    Date:<br>
+    Reporter: {{ r.reporter_it_belongs_to.user_name }}
+  </div>
 </div>
+</a>
+
+{% endfor %}
+
 {% else %}
 <h6 class='lead'>No Results</h6>
 {% endif %}
