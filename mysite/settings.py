@@ -142,7 +142,7 @@ LOGIN_REDIRECT_URL = '/'
 
 #heroku stuff
 import dj_database_url
-DATABASES['default'] = dj_database_url.config(default='postgres://postgres:supahot@localhost/django_dev')
+DATABASES['default'] = dj_database_url.config(default='postgres://wweviukmzkrohg:L9U3X9Q4EjkJo32paY4P1Se5K4@ec2-54-204-41-175.compute-1.amazonaws.com:5432/dc166igajbv0hk')
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
