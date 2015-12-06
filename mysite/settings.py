@@ -90,9 +90,9 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mydb2',
-        'USER': 'max',
-        'PASSWORD': 'zenner',
+        'NAME': 'django_dev',
+        'USER': 'postgres',
+        'PASSWORD': 'supahot',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -139,3 +139,20 @@ REGISTRATION_EMAIL_HTML = True
 REGISTRATION_AUTO_LOGIN = False
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
+
+#heroku stuff
+import dj_database_url
+DATABASES['default'] = dj_database_url.config(default='postgres://postgres:supahot@localhost/django_dev')
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+ALLOWED_HOSTS = ['*']
+
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = 'staticfiles'
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+	os.path.join(BASE_DIR, 'static'),
+)
