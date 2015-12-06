@@ -52,26 +52,60 @@ def ranked_search(query):
         results = []
 
         for i in range(len(list(qAND_docs))):
-            report_id = Report.objects.get(pk=int(qOR_docs[i].fields()['report_id'])).id
+            report_id = Report.objects.get(pk=int(qOR_docs[i].fields()['report_id']))
             results.append((report_id, qOR_docs[i].score))
             
 
         for j in range(len(list(qOR_docs))):
-            report_id = Report.objects.get(pk=int(qOR_docs[j].fields()['report_id'])).id
+            report_id = Report.objects.get(pk=int(qOR_docs[j].fields()['report_id']))
             results.append((report_id, qOR_docs[j].score))
 
         for k in range(len(list(qAM_docs))):
-            report_id = Report.objects.get(pk=int(qAM_docs[k].fields()['report_id'])).id
+            report_id = Report.objects.get(pk=int(qAM_docs[k].fields()['report_id']))
             results.append((report_id, qAM_docs[k].score))
 
 
-        results = removeDuplicates(sorted(results,key=lambda x: x[0], reverse=True))
+        results = removeDuplicates(results)
 
-        print(results)
         
         results_and_info = { 'results' : results,
                               'hits' : hits,
                         }
+
+
+        # for numid, fields in hits.items():
+        #     print(numid)
+        #     for field, field_value in fields.items():
+        #         print(field)
+        #         if field == 'full_description':
+        #             for term in field_value:
+        #                 print(term)
+        #             print('\n')
+        #         elif field == 'description':
+        #             for term2 in field_value:
+        #                 print(term2)
+        #             print('\n')
+        #         elif field == 'file_text':
+        #             print(field_value)
+        #             print('\n')
+        #         elif field == 'date':
+        #             print(field_value)
+        #             print('\n')
+        #         elif field == 'reporter':
+        #             print(field_value)
+        #             print('\n')
+
+        
+        for r, s in results:
+            for numid, fields in hits.items():
+                if r.id == numid:
+                    print(numid)
+                    for field, field_value in fields.items():
+                        print(field)          
+
+
+
+        
         return results_and_info
         
 
@@ -88,7 +122,7 @@ def get_stats(or_docs):
         hits[r_id] = {}
         hits[r_id]['description'] = set()
         hits[r_id]['full_description'] = set()
-        hits[r_id]['file_text'] = set()
+        hits[r_id]['file_text'] = ""
         hits[r_id]['reporter'] = set()
         hits[r_id]['date'] = set()
 
@@ -100,8 +134,9 @@ def get_stats(or_docs):
             if term.lower() in h.highlights('full_description', top=5).lower():
                 hits[r_id]['full_description'].add(term)
 
-            if term.lower() in h.highlights('file_text', top=5).lower():
-                hits[r_id]['file_text'].add(term)
+            # if term.lower() in h.highlights('file_text', top=5).lower():
+                # hits[r_id]['file_text'].add(term)
+            
 
             if term.lower() in h.highlights('reporter', top=5).lower():
                 hits[r_id]['reporter'].add(term)
@@ -109,17 +144,20 @@ def get_stats(or_docs):
             if term.lower() in h.highlights('date', top=5).lower():
                 hits[r_id]['date'].add(term)
 
-    for k, v in hits.iteritems():
-        print(v)
+        hits[r_id]['file_text'] += h.highlights('file_text', top=5)
+
     return hits
 
 
 
-def removeDuplicates(x):
-    for i in reversed(range(len(x))):
-        if x[i][0] == x[i-1][0] and i != 0:
-            x.pop(i)
-    return x
+def removeDuplicates(results):
+    results = sorted(results,key=lambda x: x[0].id, reverse=True)
+    for i in reversed(range(len(results))):
+        if results[i][0] == results[i-1][0] and i != 0:
+            results.pop(i)
+
+    results = sorted(results,key=lambda x: x[1], reverse=True)
+    return results
 
 
 # Query Expansion. Generate OR and AndMaybe queries
@@ -158,4 +196,4 @@ def queryAndMaybe(query):
 
 # Remove indexdir from the cmd line if not working and remake
 make_search_index()
-ranked_search('test and query')
+ranked_search('normandy ethiopia holocaust derek report')

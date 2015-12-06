@@ -637,7 +637,8 @@ def search(request):
         query = request.GET['q']
         context = ranked_search(query)
         context['query'] = query
-        print(context)
+        for i in context['hits']:
+            print(i)
         return render(request, 'search.html', context)
 
     return render(request, 'search.html', {})
