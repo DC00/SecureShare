@@ -12,10 +12,11 @@ from django.utils import timezone
 import base64
 from encryption import encrypt, decrypt
 
-from .search import make_search_index, ranksearch
+from .search import *
+from .indexer import *
 
 
-#from .encryption import encrypt, decrypt
+from .encryption import encrypt, decrypt
 
 from .models import Report, Reporter, Message, Group, Membership, Folder
 
@@ -634,12 +635,11 @@ def search(request):
     if request.GET:
         make_search_index()
         query = request.GET['q']
-        results = ranksearch('bm25', query)
-        context = {
-            'results' : results,
-            'query' : query,
-        }
+        context = ranked_search(query)
+        context['query'] = query
+        print(context)
         return render(request, 'search.html', context)
+
     return render(request, 'search.html', {})
 
 
