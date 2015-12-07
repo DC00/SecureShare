@@ -419,6 +419,7 @@ def sent(request):
 #DETAILS VIEWS ARE RESPONSIBLE FOR DISPLAY OF INVIDUAL REPORTS,MESSAGES,GROUPS,AND FOLDERS
 def detail(request, report_id):
     report = Report.objects.get(id=report_id)
+
     logged_in_reporter = Reporter.objects.get(user_name=request.user)
 
     context = {
@@ -618,17 +619,10 @@ def logout_view(request):
 def view_file(request, filename):
     with open('media/%s' % (filename), 'r') as f:
         file_text = f.read().rstrip()
-        
+
     context = {'file_text' : file_text}
     return render(request, 'view_file.html', context)
 
-
-# def search(request):
-    # if request.GET:
-    #     search_term = request.GET['q']
-    #     results = Report.objects.filter(full_description__contains=search_term)
-    #     return render_to_response('search.html', {'results': results})
-    # return render_to_response('search.html', {})
 
 
 def search(request):
@@ -642,18 +636,6 @@ def search(request):
         return render(request, 'search.html', context)
 
     return render(request, 'search.html', {})
-
-
-    # search_term = request.GET.get('query')
-    # reports = Report.objects.all()
-    # results = ["haha", "this", "should", "work"]
-    # context = { 'reports' : reports,
-    #             'query' : q,
-    #             'term' : search_term,
-    #             'results' : results
-    #           }
-    # return render(request, 'search.html', context)
-
 
 
 
