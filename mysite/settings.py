@@ -141,11 +141,9 @@ SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 
 #heroku stuff
-<<<<<<< HEAD
-=======
 import dj_database_url
+
 #DATABASES['default'] = dj_database_url.config(default='postgres://deumnmhuxkgsjd:dM3jz_E3iyALjHnKKZuDqBS5QO@ec2-54-204-41-175.compute-1.amazonaws.com:5432/d97088oc8t4676')
->>>>>>> 32524b02fbe7625bb82ceff14e51c53c51b272af
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
