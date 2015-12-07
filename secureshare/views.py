@@ -141,7 +141,7 @@ def gindex(request):
             latest_group_list = Group.objects.all()
         else:
             for g in Group.objects.all():
-                for r in g.memebrs.all():
+                for r in g.members.all():
                     if r == logged_in_reporter:
                         latest_group_list.append(g)
 
