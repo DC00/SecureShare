@@ -90,9 +90,9 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django_dev',
-        'USER': 'postgres',
-        'PASSWORD': 'supahot',
+        'NAME': 'mydb2',
+        'USER': 'max',
+        'PASSWORD': 'zenner',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -141,8 +141,6 @@ SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 
 #heroku stuff
-import dj_database_url
-DATABASES['default'] = dj_database_url.config()
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
