@@ -14,10 +14,11 @@
   <div class="panel-heading">
     <h3 class="panel-title">Date Created</h3>
   </div>
-  <div class="panel-body">
+  <div class="panel-body" id="timestamp">
     {{report.created_at}}
   </div>
 </div>
+
 
 <div class="panel panel-default">
   <div class="panel-heading">
@@ -42,7 +43,11 @@
     <h3 class="panel-title">Uploaded File</h3>
   </div>
   <div class="panel-body" id="full descr"> 
-    <a href="/media/{{report.uploaded_files}}">View Uploaded File</a>
+    {% if report.has_file %}
+      <a href="/media/{{report.uploaded_files}}">View Uploaded File</a>
+    {% else %}
+      <p>No Uploaded File</p>
+    {% endif %}
   </div>
  </div>
 

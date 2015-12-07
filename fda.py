@@ -102,7 +102,7 @@ def encrypt_file(fileName, key):
     key_size8 = key[0:8]
     cipher = DES.new(key_size8, DES.MODE_CFB, iv)
     for line in f:
-	f2.write(cipher.encrypt(line))
+        f2.write(cipher.encrypt(line))
         print '\n'
         print fileName+'.enc is encrypted and saved to the current directory'
         print
@@ -133,15 +133,41 @@ def logIn():
  
     # Try accessing a page that requires you to be logged in
     response = client.get('http://localhost:8000/reports/')
-
     html = response.text
+
+    print("Success? %s" % (response.status_code))
+
     find_report_urls(html)
-    make_reports()
+
+
+    # At this point, have all the urls of reports that the user has made/shared with them
+    # Because Django is being a pussy ass little bitch the worker in make_reports() is
+    # not being persisted in the client session
+
+    user_reports = {}
+    if len(report_urls) == 0:
+        print('\nNo Reports to Display')
+        return
+
+    i = 0
+    for url in report_urls:
+        html = client.get(url).text
+        report = make_report_object(html)
+        report.id = i
+        user_reports[i] = report
+        i+=1
+
+    print(user_reports)
+
+
+
+
+
+    # make_reports(login_data)
     client.close()
 
 def find_report_urls(html):
     soup = BeautifulSoup(html, 'html.parser')
-
     # clear reports if there was a previous login
     global report_urls
     report_urls = []
@@ -152,26 +178,6 @@ def find_report_urls(html):
 
     for rs in soup.find('ul', id="reports").find_all('a'):
         report_urls.append("%s%s" % (URL_BASE, rs['href']))
-
-
-def make_reports():
-    global user_reports
-    user_reports = {}
-
-    worker = requests.Session()
-    if len(report_urls) == 0:
-        print("\nNo Reports to Display\n")
-        return
-
-    i = 0
-    for url in report_urls:
-        html = worker.get(url).text
-        report = make_report_object(html)
-        report.id = i
-        user_reports[i] = report
-        i+=1
-
-    worker.close()
   
 
 def display_remote_reports():
@@ -216,6 +222,7 @@ def make_report_object(html):
     private = list(soup.find(id='is private').descendants)[0].strip()
     timestamp = list(soup.find(id='timestamp').descendants)[0].strip()
     return Report(desc, full_desc, rep, private, timestamp)
+    return Report(desc="haha", full_desc="haha", rep="haha", private=False, timestamp="now")
 
 
 
@@ -224,7 +231,7 @@ def mainMenu():
     while True:
         print('Please select one of the following options.')
         print('1. View/Download Articles')
-	print('2. Encryt File')
+        print('2. Encryt File')
         print('3. Decrypt File')
         print('4. Relog In')
         print('5. Display Remote Reports')
@@ -235,15 +242,15 @@ def mainMenu():
         if choice == '1':
             os.system('clear')
             viewFiles()
-	elif choice == '2':
-	    os.system('clear')
-	    filename = raw_input('Enter the name of the file you want to encrypt: ')
-	    securekey = raw_input('Enter the key: ')
-	    encrypt_file(filename, securekey)
+        elif choice == '2':
+            os.system('clear')
+            filename = raw_input('Enter the name of the file you want to encrypt: ')
+            securekey = raw_input('Enter the key: ')
+            encrypt_file(filename, securekey)
         elif choice == '3':
             os.system('clear')
             filename = raw_input('Enter the name of the file you want to decrypt: ')
-	    securekey = raw_input('Enter the key: ')
+            securekey = raw_input('Enter the key: ')
             decrypt_file(filename, securekey)
         elif choice == '3':
             os.system('clear')

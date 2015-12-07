@@ -56,6 +56,11 @@ class Report(models.Model):
         reporter = self.reporter_it_belongs_to
         return reporter.user_name.split(' ')
 
+    def has_file(self):
+        if self.uploaded_files:
+            return True
+        return False
+
 
 class Folder(models.Model):
     name = models.CharField(max_length=120)
