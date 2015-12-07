@@ -87,16 +87,16 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django_dev',
-        'USER': 'postgres',
-        'PASSWORD': 'supahot',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'django_dev',
+#        'USER': 'postgres',
+#        'PASSWORD': 'supahot',
+#        'HOST': 'localhost',
+#        'PORT': '5432',
+#    }
+#}
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
@@ -142,7 +142,7 @@ LOGIN_REDIRECT_URL = '/'
 
 #heroku stuff
 import dj_database_url
-#DATABASES['default'] = dj_database_url.config(default='postgres://deumnmhuxkgsjd:dM3jz_E3iyALjHnKKZuDqBS5QO@ec2-54-204-41-175.compute-1.amazonaws.com:5432/d97088oc8t4676')
+DATABASES['default'] = dj_database_url.config(default='postgres://deumnmhuxkgsjd:dM3jz_E3iyALjHnKKZuDqBS5QO@ec2-54-204-41-175.compute-1.amazonaws.com:5432/d97088oc8t4676')
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
