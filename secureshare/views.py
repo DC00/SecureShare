@@ -68,6 +68,10 @@ def index(request):
 
         if logged_in_reporter.is_superuser:
             user_report_list = Report.objects.all()
+            for j in Report.objects.all():
+                if j.reporter_it_belongs_to == logged_in_reporter:
+                    user_made_report_list.append(j)
+
         else:
             for t in Report.objects.all():
                 #if code breaks, take out this if series 
@@ -88,6 +92,7 @@ def index(request):
                     user_report_list.append(t)
                 if t.reporter_it_belongs_to==logged_in_reporter: 
                     user_made_report_list.append(t) 
+
         for f in Folder.objects.all():
             print(f.owner)
             if f.owner == logged_in_reporter:
