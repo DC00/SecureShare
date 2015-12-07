@@ -11,13 +11,19 @@ from secureshare.models import Report
 
 import os
 
+from whoosh.query import Query
+from whoosh.index import create_in
+from whoosh.fields import *
+from whoosh.qparser import QueryParser, OperatorsPlugin
+from whoosh.index import open_dir
+from whoosh import scoring
+
+from secureshare.models import Report
+
 BASE_DIR = os.getcwd()
 MEDIA_DIR = "%s/media/" % (BASE_DIR)
 
 def make_search_index():
-    # print(os.getcwd())
-    shutil.rmtree('indexdir')
-    os.makedirs('indexdir')
     schema = Schema(description=TEXT(stored=True), full_description=TEXT(stored=True), file_text=TEXT(stored=True), 
                     reporter=TEXT(stored=True), date=TEXT(stored=True), report_id=NUMERIC(stored=True, numtype=int))
 

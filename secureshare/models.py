@@ -36,9 +36,30 @@ class Report(models.Model):
     is_private = models.BooleanField(blank=True, default=False)
     # Foreign key for relationship to a Reporter. Many Reports to One Reporter
     reporter_it_belongs_to = models.ForeignKey(Reporter, blank=True, null=True, on_delete=models.SET_NULL, related_name='belongs_to')
-    
+
     def __str__(self):
        return self.description
+
+    # For Search Display
+    def split_description(self):
+        return self.description.split(' ')
+
+    # For search display
+    def split_full_description(self):
+        return self.full_description.split(' ')
+
+    # For search display
+    def formatted_date(self):
+        return str(self.created_at)[0:10].split('-')
+
+    def split_username(self):
+        reporter = self.reporter_it_belongs_to
+        return reporter.user_name.split(' ')
+
+    def has_file(self):
+        if self.uploaded_files:
+            return True
+        return False
 
 
 class Folder(models.Model):

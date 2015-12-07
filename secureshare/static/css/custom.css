@@ -1,3 +1,11 @@
 .text-align-center {
     text-align: center;
-}  
+}
+
+b {
+	color:blue;
+}
+
+#field {
+	color:black;
+}
