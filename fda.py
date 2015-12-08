@@ -42,69 +42,97 @@ class Report:
         return "Description: %s\nFull Description: %s\nReporter: %s\nIs it Private?: %s\nCreated At: %s\nFile Text: %s\n" % (self.description, self.full_description, self.reporter, self.is_private, self.created_at, self.file_text)
 
 
-def encrypt_text(text, key):
-    key_size8 = key[0:8]
-    cipher = DES.new(key_size8, DES.MODE_CFB, iv)
-    encrypted = cipher.encrypt(text)
-    return encrypted
+# def encrypt_text(text, key):
+#     key_size8 = key[0:8]
+#     cipher = DES.new(key_size8, DES.MODE_CFB, iv)
+#     encrypted = cipher.encrypt(text)
+#     return encrypted
 
-def decrypt_text(text, key):
-    key_size8 = key[0:8]
-    cipher = DES.new(key_size8, DES.MODE_CFB, iv)
-    return cipher.decrypt(text)
+# def decrypt_text(text, key):
+#     key_size8 = key[0:8]
+#     cipher = DES.new(key_size8, DES.MODE_CFB, iv)
+#     return cipher.decrypt(text)
 
 def viewFiles():
-    print('REPORTS:')
+    print('REPORTS:\n')
     for file in os.listdir(os.curdir):
         if file.endswith(".txt"):
             print(file)
-            print('\n')
+
+    print
+    for file in os.listdir(os.curdir):
+        if file.endswith(".txt.enc"):
+            print(file)
+
+    for file in os.listdir(os.curdir):
+        if file.endswith(".txt.dec"):
+            print(file)
+
+    print
+
+
+def decrypt_file():
     while True:
-       choice = raw_input('Which file would you like to open (enter q to quit): ')
-       if choice is 'q':
-          break
-       elif not os.path.isfile(choice):
-          print('THAT FILE DOES NOT EXIST')
-       else:
-          f = open(choice, 'r')
-          contents = f.read()
-          f.close()
-          print('\n')
-          print(choice)
-          print(contents)
-          print('\n')
-          break
+        filename = raw_input('Which file would you like to decrypt? (enter q to quit): ')
+        if filename is 'q':
+            mainMenu()
+        elif not os.path.isfile(filename):
+            print('THAT FILE DOES NOT EXIST')
+        else:
+            break
 
-
-def decrypt_file(fileName, key):
-    if not os.path.isfile(fileName):
+    if not os.path.isfile(filename):
         print('\nTHAT FILE IS NOT IN THE CURRENT DIRECTORY OR DOES NOT EXIST. PLEASE TRY AGAIN\n')
-        return False
-    output = ""
-    f = open(fileName, 'rb')
-    key_size8 = key[0:8]
-    cipher = DES.new(key_size8, DES.MODE_CFB, iv)
-    for line in f:
-        output += cipher.decrypt(line)
-        output += '\n'
-        print '\n'
-        print fileName
-        print
-        print output
+        mainMenu()
 
-def encrypt_file(fileName, key):
-    if not os.path.isfile(fileName):
+    key = str(raw_input("Enter your password: "))
+
+    with open(filename, 'rb') as fr:
+        file_text = fr.read()
+
+    decrypted_text = base64.b64encode(decrypt(file_text, key))
+
+    with open("%s.dec" % (filename), 'wb') as fw:
+        fw.write(decrypted_text)
+
+    print(file_text)
+    print(decrypted_text)
+    print
+
+    print filename+'.dec is decrypted and saved to the current directory\n'
+
+def encrypt_file():
+    while True:
+        filename = raw_input('Which file would you like to encrypt? (enter q to quit): ')
+        if filename is 'q':
+            mainMenu()
+        elif not os.path.isfile(filename):
+            print('THAT FILE DOES NOT EXIST')
+        else:
+            break
+
+    if not os.path.isfile(filename):
         print('\nTHAT FILE IS NOT IN THE CURRENT DIRECTORY OR DOES NOT EXIST. PLEASE TRY AGAIN\n')
-        return False
-    f = open(fileName, 'rb')
-    f2 = open(fileName+'.enc', 'wb')
-    key_size8 = key[0:8]
-    cipher = DES.new(key_size8, DES.MODE_CFB, iv)
-    for line in f:
-        f2.write(cipher.encrypt(line))
-        print '\n'
-        print fileName+'.enc is encrypted and saved to the current directory'
-        print
+        mainMenu()
+
+    key = str(raw_input("Enter your password: "))
+
+    with open(filename, 'rb') as fr:
+        file_text = fr.read()
+
+    encrypted_text = base64.b64encode(encrypt(file_text, key))
+
+    with open("%s.enc" % (filename), 'wb') as fw:
+        fw.write(encrypted_text)
+
+    print(file_text)
+    print(encrypted_text)
+    print
+
+    print filename+'.enc is encrypted and saved to the current directory\n'
+    
+
+
 
 def logIn():
     os.system('clear')
@@ -300,6 +328,8 @@ def mainMenu():
         print('Please select one of the following options.')
         print('1. Display Remote Reports')
         print('2. Relog In')
+        print('3. Encrypt Local File')
+        print('4. Decrypt Local File')
         print('0. Quit')
         choice = raw_input('Enter your choice: ')
 
@@ -309,6 +339,14 @@ def mainMenu():
         elif choice == '2':
             os.system('clear')
             logIn()
+        elif choice == '3':
+            os.system('clear')
+            viewFiles()
+            encrypt_file()
+        elif choice == '4':
+            os.system('clear')
+            viewFiles()
+            decrypt_file()
         elif choice == '0':
             sys.exit(0)
         else:
