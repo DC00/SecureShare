@@ -10,14 +10,19 @@
 <br>
 
 
-
-
-
 {% if user_report_list %}
-<p>Reports Viewable to You</p>
+<h2>Reports Viewable to You</h2>
+
     <ul id="reports">
     {% for r in user_report_list %}
-        <li><a href="/reports/{{ r.id }}/">{{ r.description }}</a></li>
+
+        <div class="panel panel-primary">
+         <div class="panel-heading">Created by: {{r.reporter_it_belongs_to}}</div>
+          <div class="panel-body">
+            <a href="/reports/{{ r.id }}/">{{ r.description }}</a>
+          </div>
+     
+    </div>
     {% endfor %}
     </ul>
 {% else %}
@@ -26,37 +31,42 @@
 
 
 {% if user_made_folder_list %}
-<p>You Folders</p>
+<h2>Your Folders</h2>
     <ul>
     {% for f in user_made_folder_list %}
-        <li><a href="/folder/{{ f.id }}/">{{ f.name }}</a></li>
+    <div class="panel panel-success">
+         <div class="panel-heading"><a href="/folder/{{ f.id }}/">{{ f.name }}</a></div>
+          <div class="panel-body">
+            {% for r in f.contents.all %}
+            <a href="/reports/{{ r.id }}/">{{ r.description }}</a>
+        {% endfor %}
+          </div>
+    
+        
     {% endfor %}
     <br>
-<br>
     </ul>
 {% else %}
     <p>No Folders Have Been Made Yet.</p>
-    <br>
-    <br>
-    <br>
-    <br>
+    
 {% endif %}
 
 
 
 {% if user_made_report_list %}
-	<p>Below are reports you have created</p>
+	<h2>Below are reports you have created</h2>
     <ul id="reports">
     {% for r in user_made_report_list %}
-        <li><a href="/reports/{{ r.id }}/">{{ r.description }}</a></li>
+        <div class="panel panel-primary">
+          <div class="panel-body">
+            <a href="/reports/{{ r.id }}/">{{ r.description }}</a>
+          </div>
+    </div>
     {% endfor %}
     </ul>
 {% else %}
     <p>You have not made any reports.</p>
-    <br>
-    <br>
-    <br>
-    <br>
+    
 {% endif %}
 {% else %}
 <p>Please log in to see your reports and folders</p>

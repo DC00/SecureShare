@@ -1,6 +1,8 @@
 from django import forms
 from .models import Reporter, Message, Report, Group, Folder
 
+
+
 class ReporterForm(forms.ModelForm):
     class Meta:
         model = Reporter
@@ -47,7 +49,8 @@ class GroupForm2(forms.Form):
 
 class FolderForm(forms.Form):
     name = forms.CharField(label='Folder Name:')
-    Report_choices = [[x.id, x.description] for x in Report.objects.all()]
+    reporter = Reporter.objects.filter(user_name = 'maxwell')
+    Report_choices = [[x.id, x.description] for x in Report.objects.filter(reporter_it_belongs_to = reporter)]
     Select_Reports= forms.MultipleChoiceField(choices=Report_choices, widget=forms.CheckboxSelectMultiple(), required=False)
 
 class FolderForm2(forms.ModelForm):
