@@ -5,6 +5,9 @@ import os.path
 import os
 from Crypto.Cipher import DES
 
+from Crypto.Cipher import ARC4
+import binascii
+import base64
 
 from bs4 import BeautifulSoup
 import requests
@@ -39,69 +42,97 @@ class Report:
         return "Description: %s\nFull Description: %s\nReporter: %s\nIs it Private?: %s\nCreated At: %s\nFile Text: %s\n" % (self.description, self.full_description, self.reporter, self.is_private, self.created_at, self.file_text)
 
 
-def encrypt_text(text, key):
-    key_size8 = key[0:8]
-    cipher = DES.new(key_size8, DES.MODE_CFB, iv)
-    encrypted = cipher.encrypt(text)
-    return encrypted
+# def encrypt_text(text, key):
+#     key_size8 = key[0:8]
+#     cipher = DES.new(key_size8, DES.MODE_CFB, iv)
+#     encrypted = cipher.encrypt(text)
+#     return encrypted
 
-def decrypt_text(text, key):
-    key_size8 = key[0:8]
-    cipher = DES.new(key_size8, DES.MODE_CFB, iv)
-    return cipher.decrypt(text)
+# def decrypt_text(text, key):
+#     key_size8 = key[0:8]
+#     cipher = DES.new(key_size8, DES.MODE_CFB, iv)
+#     return cipher.decrypt(text)
 
 def viewFiles():
-    print('REPORTS:')
+    print('REPORTS:\n')
     for file in os.listdir(os.curdir):
         if file.endswith(".txt"):
             print(file)
-            print('\n')
+
+    print
+    for file in os.listdir(os.curdir):
+        if file.endswith(".txt.enc"):
+            print(file)
+
+    for file in os.listdir(os.curdir):
+        if file.endswith(".txt.dec"):
+            print(file)
+
+    print
+
+
+def decrypt_file():
     while True:
-       choice = raw_input('Which file would you like to open (enter q to quit): ')
-       if choice is 'q':
-          break
-       elif not os.path.isfile(choice):
-          print('THAT FILE DOES NOT EXIST')
-       else:
-          f = open(choice, 'r')
-          contents = f.read()
-          f.close()
-          print('\n')
-          print(choice)
-          print(contents)
-          print('\n')
-          break
+        filename = raw_input('Which file would you like to decrypt? (enter q to quit): ')
+        if filename is 'q':
+            mainMenu()
+        elif not os.path.isfile(filename):
+            print('THAT FILE DOES NOT EXIST')
+        else:
+            break
 
-
-def decrypt_file(fileName, key):
-    if not os.path.isfile(fileName):
+    if not os.path.isfile(filename):
         print('\nTHAT FILE IS NOT IN THE CURRENT DIRECTORY OR DOES NOT EXIST. PLEASE TRY AGAIN\n')
-        return False
-    output = ""
-    f = open(fileName, 'rb')
-    key_size8 = key[0:8]
-    cipher = DES.new(key_size8, DES.MODE_CFB, iv)
-    for line in f:
-        output += cipher.decrypt(line)
-        output += '\n'
-        print '\n'
-        print fileName
-        print
-        print output
+        mainMenu()
 
-def encrypt_file(fileName, key):
-    if not os.path.isfile(fileName):
+    key = str(raw_input("Enter your password: "))
+
+    with open(filename, 'rb') as fr:
+        file_text = fr.read()
+
+    decrypted_text = base64.b64encode(decrypt(file_text, key))
+
+    with open("%s.dec" % (filename), 'wb') as fw:
+        fw.write(decrypted_text)
+
+    print(file_text)
+    print(decrypted_text)
+    print
+
+    print filename+'.dec is decrypted and saved to the current directory\n'
+
+def encrypt_file():
+    while True:
+        filename = raw_input('Which file would you like to encrypt? (enter q to quit): ')
+        if filename is 'q':
+            mainMenu()
+        elif not os.path.isfile(filename):
+            print('THAT FILE DOES NOT EXIST')
+        else:
+            break
+
+    if not os.path.isfile(filename):
         print('\nTHAT FILE IS NOT IN THE CURRENT DIRECTORY OR DOES NOT EXIST. PLEASE TRY AGAIN\n')
-        return False
-    f = open(fileName, 'rb')
-    f2 = open(fileName+'.enc', 'wb')
-    key_size8 = key[0:8]
-    cipher = DES.new(key_size8, DES.MODE_CFB, iv)
-    for line in f:
-        f2.write(cipher.encrypt(line))
-        print '\n'
-        print fileName+'.enc is encrypted and saved to the current directory'
-        print
+        mainMenu()
+
+    key = str(raw_input("Enter your password: "))
+
+    with open(filename, 'rb') as fr:
+        file_text = fr.read()
+
+    encrypted_text = base64.b64encode(encrypt(file_text, key))
+
+    with open("%s.enc" % (filename), 'wb') as fw:
+        fw.write(encrypted_text)
+
+    print(file_text)
+    print(encrypted_text)
+    print
+
+    print filename+'.enc is encrypted and saved to the current directory\n'
+    
+
+
 
 def logIn():
     os.system('clear')
@@ -208,7 +239,7 @@ def view_report(r_id):
     report = user_reports[r_id]
     os.system('clear')
     print(report.full_summary())
-    print("1. Download Report\n2. View Attached File\n3. Go Back\n0. Main Menu")
+    print("1. Download Report\n2. View Attached File\n3. Go Back\n4. Decrypt File\n5. Encrypt File\n0. Main Menu")
     input_key = str(raw_input(">>>  "))
 
     if input_key == '1':
@@ -217,20 +248,58 @@ def view_report(r_id):
         view_file(r_id)
     elif input_key == '3':
         display_remote_reports()
+    elif input_key == '4':
+        decrypt_file_text(r_id, user_files[r_id])
+    elif input_key == '5':
+        encrypt_file_text(r_id, user_files[r_id])
     elif input_key == '0':
         mainMenu()
 
 
-# TODO: change to downloading the files attached to the report?
+def encrypt_file_text(r_id, file_text):
+    global user_files
+    global user_reports
+    key = str(raw_input("Please enter your password: "))
+    print(file_text)
+    print("###########################################################")
+    encrypted_text = base64.b64encode(encrypt(file_text, key))
+    print(encrypted_text)
+    user_files[r_id] = encrypted_text
+    user_reports[r_id].file_text = encrypted_text
+    return encrypted_text
+
+
+def decrypt_file_text(r_id, file_text):
+    key = str(raw_input("Please enter your password: "))
+    cipher = ARC4.new(key)
+    decrypted_text = decrypt(base64.b64decode(file_text), key)
+    print(file_text)
+    print("###########################################################")
+    print(decrypted_text.decode('utf-8'))
+    user_files[r_id] = decrypted_text
+    user_reports[r_id].file_text = decrypted_text
+    return decrypted_text.decode("utf-8")
+
+
+def decrypt(text, key):
+    cipher = ARC4.new(key)
+    decrypted_text = cipher.decrypt(text)
+    return decrypted_text.decode("utf-8")
+
+def encrypt(text, key):
+    cipher = ARC4.new(key)
+    encrypted_text = cipher.encrypt(text.encode('utf-8'))
+    return encrypted_text
+
+
 def download_file(r_id, file_text):
-    filename = "%s_download_file.txt" % (r_id)
+    filename = "downloaded_file_id-%s.txt" % (r_id)
     with open(filename, 'wb') as writer:
         writer.write(file_text)
     for i in range(101):
         time.sleep(0.02)
         sys.stdout.write("\r%d%%" % i)
         sys.stdout.flush()
-
 
 
 def view_file(r_id):
@@ -257,38 +326,46 @@ def make_report_object(html):
 def mainMenu():
     while True:
         print('Please select one of the following options.')
-        print('1. View/Download Articles')
-        print('2. Encryt File')
-        print('3. Decrypt File')
-        print('4. Relog In')
-        print('5. Display Remote Reports')
+        print('1. Display Remote Reports')
+        print('2. Relog In')
+        print('3. Encrypt Local File')
+        print('4. Decrypt Local File')
         print('0. Quit')
         choice = raw_input('Enter your choice: ')
 
-
         if choice == '1':
             os.system('clear')
-            viewFiles()
+            display_remote_reports()
         elif choice == '2':
             os.system('clear')
-            filename = raw_input('Enter the name of the file you want to encrypt: ')
-            securekey = raw_input('Enter the key: ')
-            encrypt_file(filename, securekey)
+            logIn()
         elif choice == '3':
             os.system('clear')
-            filename = raw_input('Enter the name of the file you want to decrypt: ')
-            securekey = raw_input('Enter the key: ')
-            decrypt_file(filename, securekey)
+            viewFiles()
+            encrypt_file()
         elif choice == '4':
             os.system('clear')
-            logIn()
-        elif choice == '5':
-            os.system('clear')
-            display_remote_reports()
+            viewFiles()
+            decrypt_file()
         elif choice == '0':
             sys.exit(0)
         else:
             print('PLEASE ENTER A VALID CHOICE\n')
+
+        # if choice == '1':
+        #     os.system('clear')
+        #     viewFiles()
+        # elif choice == '2':
+        #     os.system('clear')
+        #     filename = raw_input('Enter the name of the file you want to encrypt: ')
+        #     securekey = raw_input('Enter the key: ')
+        #     encrypt_file(filename, securekey)
+        # elif choice == '3':
+        #     os.system('clear')
+        #     filename = raw_input('Enter the name of the file you want to decrypt: ')
+        #     securekey = raw_input('Enter the key: ')
+        #     decrypt_file(filename, securekey)
+
 
 
 if __name__ == "__main__":
