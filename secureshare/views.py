@@ -125,6 +125,8 @@ def windex(request):
         context = {
             'title': title,
             'latest_message_list' : latest_message_list,
+            'log' : log
+
         }
     else:
         title = "please log in to see your messages"
@@ -153,6 +155,7 @@ def gindex(request):
         context = {
             'title': title,
             'latest_group_list' : latest_group_list,
+            'log' : log
         }
     else: 
         title = "please log in to see your messages"
