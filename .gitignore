@@ -3,7 +3,7 @@ mysite/__init__.pyc
 mysite/settings.py
 mysite/settings.pyc
 secureshare/__init__.pyc
-secureshare/migrations/*
+#secureshare/migrations/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
