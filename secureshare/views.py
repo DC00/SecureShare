@@ -62,8 +62,9 @@ def index(request):
     user_report_list = []
     user_made_report_list =[]
     user_made_folder_list =[]
-
+    log = False
     if request.user.is_authenticated():
+        log = True
         logged_in_reporter = Reporter.objects.get(user_name=request.user)
 
         if logged_in_reporter.is_superuser:
@@ -103,7 +104,8 @@ def index(request):
     # e.g. maps 'latest_report_list' -> latest_report_list
     context = {'user_report_list': user_report_list,
     'user_made_report_list': user_made_report_list,
-    'user_made_folder_list': user_made_folder_list
+    'user_made_folder_list': user_made_folder_list,
+    'log' : log
             }
     
     return render(request, 'reports/index.html', context)
@@ -113,9 +115,9 @@ def index(request):
 
 def windex(request):
     title = 'Welcome to Messages'
-
-    
+    log = False
     if request.user.is_authenticated():
+        log = True
         latest_message_list = []
         logged_in_reporter = Reporter.objects.get(user_name=request.user)
         latest_message_list = Message.objects.all().filter(send_to=logged_in_reporter)
@@ -128,12 +130,14 @@ def windex(request):
         title = "please log in to see your messages"
         context = {
             'title': title,
+            'log' : log
         }
     return render(request, 'message/index2.html', context)
 
 def gindex(request):
-    
+    log = False
     if request.user.is_authenticated():
+        log = True
         logged_in_reporter = Reporter.objects.get(user_name=request.user)
         latest_group_list = []
 
@@ -157,13 +161,16 @@ def gindex(request):
         }
     return render(request, 'gindex.html', context)
 def rindex(request):
-    
+    log = False
     latest_reporter_list = Reporter.objects.order_by('user_name')
+    if request.user.is_authenticated():
+        log = True
 
     title = 'here are all reporters!'
     context = {
         'title': title,
         'latest_reporter_list' : latest_reporter_list,
+        'log' : log
     }
 
         # Loads the template at reports/index.html and passes it a context
@@ -285,10 +292,8 @@ def editreport(request, report_id):
 
         instance = form.save(commit=False)
 
-        print(instance.description)
         Report.objects.get(id=report_id).description = instance.description
         instance.save()
-        print(Report.objects.get(id=report_id).description)
         Report.objects.get(id=report_id).full_description = instance.full_description
 
         # print(instance.timestamp)
@@ -455,7 +460,6 @@ def detail4(request, folder_id):
 def detail3(request, group_id):
     group = Group.objects.get(id=group_id)
     reporters = group.members.all()
-    print(reporters)
     context = {
         'Group' : group,
         'Reporters' : reporters
@@ -499,7 +503,6 @@ def signup(request):
         if not Reporter.objects.all():
             instance.is_superuser = True
         instance.save()
-        print(instance.email)
 
         context = {
             'title': "Thank you!",
@@ -567,7 +570,6 @@ def makesuper(request, reporter_id):
 def suspend(request, reporter_id):
     reporter = Reporter.objects.get(id=reporter_id)
     reporter.user.is_active = False
-    print(reporter.user.is_active)
     reporter.user.save()
     reporter.save()
     context = {
@@ -636,8 +638,6 @@ def search(request):
         query = request.GET['q']
         context = ranked_search(query)
         context['query'] = query
-        for i in context['hits']:
-            print(i)
         return render(request, 'search.html', context)
 
     return render(request, 'search.html', {})

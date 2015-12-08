@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-
+{% if log %}
 <a class="btn btn-lg btn-primary" href="/sendmessage/" align ="center" role="button">Send New Message&raquo;</a>
 {% if latest_message_list %}
     <ul>
@@ -14,7 +14,9 @@
 {% else %}
     <p>No Messages yet.</p>
 {% endif %}
-
+{% else %}
+<p>Please log in to see your messages</p>
+{% endif %}
 
 
 {% endblock %}

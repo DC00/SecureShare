@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-
+{% if log %}
 {% if latest_reporter_list %}
 {% for r in latest_reporter_list %}
         <li><a href="/reporter/{{ r.id }}/">{{ r.user_name }}</a></li>
@@ -12,7 +12,9 @@
 {% else %}
     <p>No other reporters on the system!</p>
 {% endif %}
-
+{% else %}
+<p>Please log in to see your messages</p>
+{% endif %}
 
 {% endblock %}
 

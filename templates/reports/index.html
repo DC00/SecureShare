@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+{% if log %}
 <a class="btn btn-lg btn-primary" href="/createreport/" align ="center" role="button">Make New Report&raquo;</a>
 <a class="btn btn-lg btn-primary" href="/createfolder/" align ="center" role="button">Make New Folder&raquo;</a>
 <br>
@@ -57,7 +58,9 @@
     <br>
     <br>
 {% endif %}
-
+{% else %}
+<p>Please log in to see your reports and folders</p>
+{% endif %}
 
 {% endblock %}
 
