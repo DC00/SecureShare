@@ -49,8 +49,7 @@ class GroupForm2(forms.Form):
 
 class FolderForm(forms.Form):
     name = forms.CharField(label='Folder Name:')
-    reporter = Reporter.objects.filter(user_name = 'maxwell')
-    Report_choices = [[x.id, x.description] for x in Report.objects.filter(reporter_it_belongs_to = reporter)]
+    Report_choices = [[x.id, x.description] for x in Report.objects.all()]
     Select_Reports= forms.MultipleChoiceField(choices=Report_choices, widget=forms.CheckboxSelectMultiple(), required=False)
 
 class FolderForm2(forms.ModelForm):
