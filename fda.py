@@ -5,6 +5,9 @@ import os.path
 import os
 from Crypto.Cipher import DES
 
+from Crypto.Cipher import ARC4
+import binascii
+import base64
 
 from bs4 import BeautifulSoup
 import requests
@@ -208,7 +211,7 @@ def view_report(r_id):
     report = user_reports[r_id]
     os.system('clear')
     print(report.full_summary())
-    print("1. Download Report\n2. View Attached File\n3. Go Back\n0. Main Menu")
+    print("1. Download Report\n2. View Attached File\n3. Go Back\n4. Decrypt File\n0. Main Menu")
     input_key = str(raw_input(">>>  "))
 
     if input_key == '1':
@@ -217,20 +220,42 @@ def view_report(r_id):
         view_file(r_id)
     elif input_key == '3':
         display_remote_reports()
+    elif input_key == '4':
+        decrypt_file_text(r_id, user_files[r_id])
     elif input_key == '0':
         mainMenu()
 
 
-# TODO: change to downloading the files attached to the report?
+def encrypt_file_text(r_id, file_text):
+    global user_files
+    global user_reports
+    print(file_text)
+    print("\n###########################################################\n")
+    cipher = ARC4.new(key)
+    encrypted_text = cipher.encrypt(text.encode('utf-8'))
+    print(encrypted_text)
+    user_files[r_id] = encrypted_text
+    user_reports[r_id].file_text = encrypted_text
+    return encrypted_text
+
+
+def decrypt_file_text(r_id, file_text):
+    cipher = ARC4.new(key)
+    decrypted_text = cipher.decrypt(text)
+    print(file_text)
+    print("\n###########################################################\n")
+    print(decrypted_text.decode('utf-8'))
+    return decrypted_text.decode("utf-8")
+
+
 def download_file(r_id, file_text):
-    filename = "%s_download_file.txt" % (r_id)
+    filename = "downloaded_file_id-%s.txt" % (r_id)
     with open(filename, 'wb') as writer:
         writer.write(file_text)
     for i in range(101):
         time.sleep(0.02)
         sys.stdout.write("\r%d%%" % i)
         sys.stdout.flush()
-
 
 
 def view_file(r_id):
