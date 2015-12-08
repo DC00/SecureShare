@@ -246,8 +246,10 @@ def decrypt_file_text(r_id, file_text):
     cipher = ARC4.new(key)
     decrypted_text = decrypt(base64.b64decode(file_text), key)
     print(file_text)
-    print("\n###########################################################\n")
+    print("###########################################################")
     print(decrypted_text.decode('utf-8'))
+    user_files[r_id] = decrypted_text
+    user_reports[r_id].file_text = decrypted_text
     return decrypted_text.decode("utf-8")
 
 
