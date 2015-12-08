@@ -211,7 +211,7 @@ def view_report(r_id):
     report = user_reports[r_id]
     os.system('clear')
     print(report.full_summary())
-    print("1. Download Report\n2. View Attached File\n3. Go Back\n4. Decrypt File\n0. Main Menu")
+    print("1. Download Report\n2. View Attached File\n3. Go Back\n4. Decrypt File\n5. Encrypt File\n0. Main Menu")
     input_key = str(raw_input(">>>  "))
 
     if input_key == '1':
@@ -222,6 +222,8 @@ def view_report(r_id):
         display_remote_reports()
     elif input_key == '4':
         decrypt_file_text(r_id, user_files[r_id])
+    elif input_key == '5':
+        encrypt_file_text(r_id, user_files[r_id])
     elif input_key == '0':
         mainMenu()
 
@@ -229,10 +231,10 @@ def view_report(r_id):
 def encrypt_file_text(r_id, file_text):
     global user_files
     global user_reports
+    key = str(raw_input("Please enter your password: "))
     print(file_text)
-    print("\n###########################################################\n")
-    cipher = ARC4.new(key)
-    encrypted_text = cipher.encrypt(text.encode('utf-8'))
+    print("###########################################################")
+    encrypted_text = base64.b64encode(encrypt(file_text, key))
     print(encrypted_text)
     user_files[r_id] = encrypted_text
     user_reports[r_id].file_text = encrypted_text
@@ -240,12 +242,24 @@ def encrypt_file_text(r_id, file_text):
 
 
 def decrypt_file_text(r_id, file_text):
+    key = str(raw_input("Please enter your password: "))
     cipher = ARC4.new(key)
-    decrypted_text = cipher.decrypt(text)
+    decrypted_text = decrypt(base64.b64decode(file_text), key)
     print(file_text)
     print("\n###########################################################\n")
     print(decrypted_text.decode('utf-8'))
     return decrypted_text.decode("utf-8")
+
+
+def decrypt(text, key):
+    cipher = ARC4.new(key)
+    decrypted_text = cipher.decrypt(text)
+    return decrypted_text.decode("utf-8")
+
+def encrypt(text, key):
+    cipher = ARC4.new(key)
+    encrypted_text = cipher.encrypt(text.encode('utf-8'))
+    return encrypted_text
 
 
 def download_file(r_id, file_text):
@@ -282,38 +296,36 @@ def make_report_object(html):
 def mainMenu():
     while True:
         print('Please select one of the following options.')
-        print('1. View/Download Articles')
-        print('2. Encryt File')
-        print('3. Decrypt File')
-        print('4. Relog In')
-        print('5. Display Remote Reports')
+        print('1. Display Remote Reports')
+        print('2. Relog In')
         print('0. Quit')
         choice = raw_input('Enter your choice: ')
 
-
         if choice == '1':
             os.system('clear')
-            viewFiles()
+            display_remote_reports()
         elif choice == '2':
             os.system('clear')
-            filename = raw_input('Enter the name of the file you want to encrypt: ')
-            securekey = raw_input('Enter the key: ')
-            encrypt_file(filename, securekey)
-        elif choice == '3':
-            os.system('clear')
-            filename = raw_input('Enter the name of the file you want to decrypt: ')
-            securekey = raw_input('Enter the key: ')
-            decrypt_file(filename, securekey)
-        elif choice == '4':
-            os.system('clear')
             logIn()
-        elif choice == '5':
-            os.system('clear')
-            display_remote_reports()
         elif choice == '0':
             sys.exit(0)
         else:
             print('PLEASE ENTER A VALID CHOICE\n')
+
+        # if choice == '1':
+        #     os.system('clear')
+        #     viewFiles()
+        # elif choice == '2':
+        #     os.system('clear')
+        #     filename = raw_input('Enter the name of the file you want to encrypt: ')
+        #     securekey = raw_input('Enter the key: ')
+        #     encrypt_file(filename, securekey)
+        # elif choice == '3':
+        #     os.system('clear')
+        #     filename = raw_input('Enter the name of the file you want to decrypt: ')
+        #     securekey = raw_input('Enter the key: ')
+        #     decrypt_file(filename, securekey)
+
 
 
 if __name__ == "__main__":
