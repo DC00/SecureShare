@@ -42,11 +42,11 @@
   <div class="panel-heading">
     <h3 class="panel-title">Uploaded File</h3>
   </div>
-  <div class="panel-body" id="full descr"> 
+  <div class="panel-body" id="uploaded files"> 
     {% if report.has_file %}
-      <a href="/media/{{report.uploaded_files}}">View Uploaded File</a>
+      <a href="/media/{{report.uploaded_files}}" id="file">View Uploaded File</a>
     {% else %}
-      <p>No Uploaded File</p>
+      <p id='no files'>No Uploaded File</p>
     {% endif %}
   </div>
  </div>

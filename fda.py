@@ -9,6 +9,7 @@ from Crypto.Cipher import DES
 from bs4 import BeautifulSoup
 import requests
 import sys
+import time
 
 URL_BASE = "http://localhost:8000"
 URL_SIGNIN = "http://localhost:8000/signin/"
@@ -22,7 +23,8 @@ class Report:
         self.reporter = rep
         self.is_private = private
         self.created_at = timestamp
-        self.id = 0
+        self.file_text = ""
+        self.id = -1
 
     def __unicode__(self):
         return self.description
@@ -34,9 +36,7 @@ class Report:
         return self.description
 
     def full_summary(self):
-        return "Description: %s\n\nFull Description: %s\n\nReporter: %s\n\nIs it Private?: %s\n\nCreated At: %s" % (self.description, self.full_description, self.reporter, self.is_private, self.created_at)
-
-
+        return "Description: %s\nFull Description: %s\nReporter: %s\nIs it Private?: %s\nCreated At: %s\nFile Text: %s\n" % (self.description, self.full_description, self.reporter, self.is_private, self.created_at, self.file_text)
 
 
 def encrypt_text(text, key):
@@ -49,10 +49,6 @@ def decrypt_text(text, key):
     key_size8 = key[0:8]
     cipher = DES.new(key_size8, DES.MODE_CFB, iv)
     return cipher.decrypt(text)
-
-def downloadFile():
-    #include code to download the file here
-    pass
 
 def viewFiles():
     print('REPORTS:')
@@ -108,6 +104,7 @@ def encrypt_file(fileName, key):
         print
 
 def logIn():
+    os.system('clear')
     print('Please Log In')
     user_name = raw_input('Username: ')
     password = raw_input('Password: ')
@@ -135,35 +132,44 @@ def logIn():
     response = client.get('http://localhost:8000/reports/')
     html = response.text
 
-    print("Success? %s" % (response.status_code))
 
-    find_report_urls(html)
+    login_was_successful = find_report_urls(html)
+    if login_was_successful:
+        print("Logged in Successfully!")
+    else:
+        print("Error while trying to log in. Please try again")
 
 
     # At this point, have all the urls of reports that the user has made/shared with them
     # Because Django is being a pussy ass little bitch the worker in make_reports() is
     # not being persisted in the client session
-
+    global user_reports
     user_reports = {}
-    if len(report_urls) == 0:
-        print('\nNo Reports to Display')
-        return
 
-    i = 0
+    # Indexing the user's files
+    global user_files
+    user_files = {}
+
+    i = 1
     for url in report_urls:
         html = client.get(url).text
         report = make_report_object(html)
         report.id = i
-        user_reports[i] = report
+        user_reports[report.id] = report
+        tomato_soup = BeautifulSoup(html, 'html.parser')
+
+        if (tomato_soup.find(id='no files')):
+            report.file_text = "No uploaded files"
+        else:
+            for fs in tomato_soup.find(id='uploaded files').find_all('a'):
+                path = "%s%s" % (URL_BASE, fs['href'])
+                clams = client.get(path).text
+                clam_chowder = BeautifulSoup(clams, 'html.parser')
+                raw_text = clam_chowder.find(id='file text').text.strip()
+                user_files[report.id] = raw_text
+                report.file_text = raw_text
         i+=1
 
-    print(user_reports)
-
-
-
-
-
-    # make_reports(login_data)
     client.close()
 
 def find_report_urls(html):
@@ -174,44 +180,65 @@ def find_report_urls(html):
 
     # DON'T FUCK WITH THESE LINES AND/OR TEMPLATES/REPORTS/INDEX.HTML
     if (soup.find(id='reports') == None):
-        return
+        return False
 
     for rs in soup.find('ul', id="reports").find_all('a'):
         report_urls.append("%s%s" % (URL_BASE, rs['href']))
+
+    return True
   
 
 def display_remote_reports():
     global user_reports
     while True:
-        print("\n#  Description")
+        print("#  Description")
         for k, v in user_reports.iteritems():
             print("%s. %s" % (k, v.description))
-        
-        print("\nSelect an Option:")
-        print("    a. View Report")
-        print("    b. Download a Report")
-        print("    Enter 'q' to quit")
-        choice = raw_input("--->> ")
+        print("\n0. Main Menu")
+        report_choice = int(raw_input(">>>  "))
+        if report_choice == 0:
+            mainMenu()
+        view_report(report_choice)
 
-        if choice == 'a':
-            view_report()
-        elif choice == 'b':
-            download_report()
-        elif choice == 'q':
-            break
 
 # TODO: change to viewing the files in the report?
-def view_report():
+def view_report(r_id):
     global user_reports
-    r_id = int(raw_input("Which Report? Enter Report #\n"))
+    global user_files
     report = user_reports[r_id]
     os.system('clear')
     print(report.full_summary())
+    print("1. Download Report\n2. View Attached File\n3. Go Back\n0. Main Menu")
+    input_key = str(raw_input(">>>  "))
+
+    if input_key == '1':
+        download_file(r_id, user_files[r_id])
+    elif input_key == '2':
+        view_file(r_id)
+    elif input_key == '3':
+        display_remote_reports()
+    elif input_key == '0':
+        mainMenu()
+
 
 # TODO: change to downloading the files attached to the report?
-def download_report():
-    pass
+def download_file(r_id, file_text):
+    filename = "%s_download_file.txt" % (r_id)
+    with open(filename, 'wb') as writer:
+        writer.write(file_text)
+    for i in range(101):
+        time.sleep(0.02)
+        sys.stdout.write("\r%d%%" % i)
+        sys.stdout.flush()
 
+
+
+def view_file(r_id):
+    global user_files
+    if user_files.get(r_id) == None:
+        print("No uploaded files")
+    else:
+        print("\n%s\n" % (user_files[r_id]))
 
 
 def make_report_object(html):
@@ -252,10 +279,10 @@ def mainMenu():
             filename = raw_input('Enter the name of the file you want to decrypt: ')
             securekey = raw_input('Enter the key: ')
             decrypt_file(filename, securekey)
-        elif choice == '3':
+        elif choice == '4':
             os.system('clear')
             logIn()
-        elif choice == '4':
+        elif choice == '5':
             os.system('clear')
             display_remote_reports()
         elif choice == '0':
@@ -268,6 +295,7 @@ if __name__ == "__main__":
     print('Secure Share v1.0')
     global report_urls
     global user_reports
+    global user_files
     report_urls = []
     user_reports = {}
     logIn()
